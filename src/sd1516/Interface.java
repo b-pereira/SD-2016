@@ -11,24 +11,66 @@ package sd1516;
  */
 
 import java.net.Socket;
+import java.lang.*;
 import java.util.*;
 import java.io.*;
 
 public class Interface {
 
 	static int port = 7229;
-  	static HashMap<String, Cliente> clientes;
+  	static HashMap<String, Cliente> clientes = new HashMap<String,Cliente>();
+        static Scanner scan = new Scanner(System.in);
 
-
-        public static int calcularTemp (int x, int y, int x1, int y1) {return 0;}
-
-        public static int logIn (String s1, String s2) { return 0;}
+        
+        /***********CalcularTemp*******************************/
+        
+        public static int calcularTemp (int x, int y, int x1, int y1) {
+            
+             //Assumiremos que demora um minuto a passar de uma posição para outra consecutiva.
+            //Calcula o tempo usando a distancia Manhattam
+            return Math.abs(x-x1) + Math.abs(y-y1);
+        }
+        
+        /****************************************************/
+        
+        /*****Log in*****************************************/
+        
+        public static int logIn (String s1, String s2) {
+            
+            if (!(clientes.containsKey(s2))) return -1; // não existe
+            
+            Cliente z = clientes.get(s2);
+            
+            if (z.getNome().equals(s2)) return -1; // não existe
+            
+            if (z.getClass().getName().equals("Cliente")) return 0; // existe e é cliente
+            
+            return 1; // existe e é taxista
+        }
+        
+        /****************************************************/
 	
-        public static void signIn () {}
+        /**********************sign in***********************/
+        
+        public static void signIn () {
+            String s1,s2,s3;
+            
+            System.out.println("\nInsira o nome de utilizador a usar:");
+	    s1 = scan.next();
+            System.out.println("\nInsira a password a usar:");
+	    s2 = scan.next();
+            System.out.println("\nInsira o seu contacto:");
+	    s3 = scan.next();
+            
+            System.out.println("A registar..");
+            clientes.put(s2, new Cliente(s1,s3));
+            System.out.println("\nRegistado com sucesso!");
+        }
+        
+        /****************************************************/
         
 	public static void main(String[] args) {
 
-		Scanner scan = new Scanner(System.in);
 		String s1,s2, pedido, resposta;
                 int xp,yp,xc,yc,x,y,i;
 		
@@ -50,7 +92,10 @@ public class Interface {
 					s2 = scan.next();
 
 					//Tenta autenticar (log in) se o conseguir então inicia a conexão via socket.
-					if (logIn(s1,s2) == -1) break;
+					if (logIn(s1,s2) == -1) {
+                                            System.out.println("Log in inválido.");
+                                            continue;
+                                        }
 
 					if (logIn(s1,s2) == 0) { // é um cliente		
 			
@@ -127,12 +172,13 @@ public class Interface {
 						// Enviar pedido do taxista
                                                 System.out.println ("A enviar pedido..");
                                                 pw.write(s1); //enviar nome
-                                                pw.write((clientes.get(s2)).getMatricula());
-                                                pw.write((clientes.get(s2)).getModelo());
+                                                Taxista tax = (Taxista) (clientes.get(s2));
+                                                pw.write(tax.getMatricula()); //enviar matrícula
+                                                pw.write(tax.getModelo()); //enviar modelo
                                                 System.out.println ("Indique a sua posição x: ");
-                                                pw.write(scan.nextInt());
+                                                pw.write(scan.nextInt()); //enviar x
                                                 System.out.println ("Indique a sua posição y: ");
-                                                pw.write(scan.nextInt());
+                                                pw.write(scan.nextInt()); //enviar y
                                                 
                                                 socket.shutdownOutput(); //Taxista já não vai enviar mais nada nesta sessão.
                         			System.out.println("Sucesso!");
@@ -141,16 +187,7 @@ public class Interface {
 						System.out.println ("À espera de uma resposta..");            	
 						resposta = br.readLine(); 
                                                 System.out.println("Um cliente requere o seu serviço.");
-                                                System.out.println("Matricula: "+resposta);
-                                                resposta = br.readLine(); 
-                                                System.out.println("Modelo: " + resposta);
-                                                resposta = br.readLine(); 
-                                                System.out.println("Irá demorar: " + resposta + " minutos a chegar até si.");
-                                                resposta = br.readLine(); 
-                                                System.out.println("O taxi chegou até si.");
-                                                resposta = br.readLine(); 
-                                                System.out.println("O taxi trouxe-o até ao destino.\nObrigado por escolher o nosso serviço.");
-            					System.out.println("Sucesso!");
+                                                
                                                 socket.shutdownInput(); // Cliente nãi irá ler mais nada nesta sessão.
           
             					socket.close(); //Importante fechar o socket, já que o cliente não precisa mais

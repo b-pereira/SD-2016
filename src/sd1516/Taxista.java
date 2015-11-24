@@ -9,7 +9,7 @@ package sd1516;
  *
  * @author ASUS
  */
-public class Taxista {
+public class Taxista extends Cliente{
     
            /** Variáveis de Classe ******************************/
           /**/ private String modelo;    /*Modelo do veículo****/
@@ -20,12 +20,40 @@ public class Taxista {
 	
         /***************Construtor***********/
          
-        public Taxista (String modelo, String matricula) {
-		this.modelo    = modelo;
+        public Taxista (String modelo, String matricula, String nome, String contacto) {
+            
+                super(nome,contacto);
+		
+                this.modelo    = modelo;
 		this.matricula = matricula;
+                
 	}
         
         /***********************************/
+        
+        
+        /***************Nome***********/
+	
+	public String getNome() {
+		return super.getNome();
+	}
+	public void setNome(String nome) {
+		super.setNome(nome);
+	}
+	
+        /*****************************/
+        
+        /**********Contacto***********/
+        
+        public String getContacto() {
+		return super.getContacto();
+	}
+	public void setContacto(String contacto) {
+		super.setContacto(contacto);
+	}
+        
+        /****************************/
+        
         
 	/***************Modelo***********/
 	
