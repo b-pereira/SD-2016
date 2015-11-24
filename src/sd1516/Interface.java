@@ -29,7 +29,7 @@ public class Interface {
 	public static void main(String[] args) {
 
 		Scanner scan = new Scanner(System.in);
-		String s1,s2,s3,s4, pedido, resposta;
+		String s1,s2, pedido, resposta;
 		
 		try {
 
@@ -63,31 +63,35 @@ public class Interface {
 						BufferedReader    br = new BufferedReader(ir);
 						PrintWriter       pw = new PrintWriter(os,true); 
             
-						// Detetar pedido do cliente
+						// Enviar pedido do cliente
+                                                
+                                                System.out.println ("A enviar pedido..");
+                                                pw.write(s1);
+                                                pw.write(s2);
 						System.out.println("\nInsira o local de partida da viagem:");
-						s3 = scan.next();
-						
+						pw.write(scan.next());
 						System.out.println("\nInsira o local de chegada da viagem:");
-						s4 = scan.next();
-							
-           					// Enviar pedido do cliente
-           					pedido    = s1+ " " +s2+ " " +s3+ " " +s4+ " ";
-						pedido    = pedido + pedido.length()+"\n"; //esta length será usada como um checksum que irá servir para verificar se o servidor recebeu de facto a mensagem toda.
-						System.out.println ("A enviar pedido..");
-            					pw.write(pedido);         
+						pw.write(scan.next());
+                                                socket.shutdownOutput(); //Cliente já não vai enviar mais nada nesta sessão.
                         			System.out.println("Sucesso!");
 
             					// Receber a resposta
 						System.out.println ("À espera de uma resposta..");            	
 						resposta = br.readLine(); 
+                                                System.out.println("Um taxi respondeu ao seu pedido e em breve virá ao seu encontro.");
+                                                System.out.println("Matricula: "+resposta);
+                                                resposta = br.readLine(); 
+                                                System.out.println("Modelo: " + resposta);
+                                                resposta = br.readLine(); 
+                                                System.out.println("Irá demorar: " + resposta + " minutos a chegar até si.");
+                                                resposta = br.readLine(); 
+                                                System.out.println("O taxi chegou até si.");
+                                                resposta = br.readLine(); 
+                                                System.out.println("O taxi trouxe-o até ao destino.\nObrigado por escolher o nosso serviço.");
             					System.out.println("Sucesso!");
-
-            					System.out.println("O taxi número: " + resposta + "respondeu ao seu pedido e em breve virá ao seu encontro.");
-         
-            					br.close();  
-            					pw.close(); 
-            					socket.close();
-				
+                                                socket.shutdownInput(); // Cliente nãi irá ler mais nada nesta sessão.
+          
+            					socket.close(); //Importante fechar o socket, já que o cliente não precisa mais
 					}
 
 					if (logIn(s1,s2) == 1) { // É um taxista
