@@ -11,25 +11,43 @@ package sd1516;
  */
 public class Cliente {
     
-           /** Variáveis de Classe ****************************/
-          /**/ private String nome;     /*Nome do cliente*****/
-	 /**/ private String contacto; /*Contacto do cliente*/
+            /** Variáveis de Classe ****************************/
+           /**/ private String nome;     /*Nome do cliente*****/
+	  /**/ private String contacto; /*Contacto do cliente*/
+         /**/ private String password; /*Password do cliente*/
         /***************************************************/
         
          
 	
-        /***************Nome***********/
+        /*************Construtor*********/
          
-        public Cliente (String nome, String contacto) {
+        public Cliente (String nome, String contacto, String password) {
 		this.nome     = nome;
 		this.contacto = contacto;
+                this.password = password;
 	}
 	
+        /********************************/
+        
+        /***************Nome***********/
+        
 	public String getNome() {
 		return nome;
 	}
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+	
+        /*****************************/
+        
+               
+        /************Password***********/
+        
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String pass) {
+		this.password = pass;
 	}
 	
         /*****************************/

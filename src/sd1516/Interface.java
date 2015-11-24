@@ -18,7 +18,7 @@ import java.io.*;
 public class Interface {
 
 	static int port = 7229;
-  	static HashMap<String, Cliente> clientes = new HashMap<String,Cliente>();
+  	static HashMap<String, Cliente> clientes = new HashMap<String,Cliente>(); // <nome do cliente, objeto cliente>
         static Scanner scan = new Scanner(System.in);
 
         
@@ -37,11 +37,11 @@ public class Interface {
         
         public static int logIn (String s1, String s2) {
             
-            if (!(clientes.containsKey(s2))) return -1; // não existe
+            if (!(clientes.containsKey(s1))) return -1; // não existe
             
-            Cliente z = clientes.get(s2);
+            Cliente z = clientes.get(s1);
             
-            if (z.getNome().equals(s2)) return -1; // não existe
+            if (z.getPassword().equals(s2)) return -1; // não existe
             
             if (z.getClass().getName().equals("Cliente")) return 0; // existe e é cliente
             
@@ -53,7 +53,11 @@ public class Interface {
         /**********************sign in***********************/
         
         public static void signIn () {
-            String s1,s2,s3;
+            String s1,s2,s3,s4,s5;
+            int i;
+            
+            System.out.println("\nPretende inscrever-se como cliente(1) ou taxista(2)?");
+            i = scan.nextInt();
             
             System.out.println("\nInsira o nome de utilizador a usar:");
 	    s1 = scan.next();
@@ -62,8 +66,21 @@ public class Interface {
             System.out.println("\nInsira o seu contacto:");
 	    s3 = scan.next();
             
+            if (i == 2) {
+                System.out.println("\nInsira o modelo do seu carro:");
+                s4 = scan.next();
+
+                System.out.println("\nInsira a matricula do seu carro:");
+                s5 = scan.next();
+                
+                System.out.println("A registar..");
+                clientes.put(s2, new Taxista(s4,s5,s1,s3,s2));
+                System.out.println("\nRegistado com sucesso!");
+                return;
+            }
+            
             System.out.println("A registar..");
-            clientes.put(s2, new Cliente(s1,s3));
+            clientes.put(s2, new Cliente(s1,s3,s2));
             System.out.println("\nRegistado com sucesso!");
         }
         

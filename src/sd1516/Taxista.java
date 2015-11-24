@@ -20,9 +20,9 @@ public class Taxista extends Cliente{
 	
         /***************Construtor***********/
          
-        public Taxista (String modelo, String matricula, String nome, String contacto) {
+        public Taxista (String modelo, String matricula, String nome, String contacto, String password) {
             
-                super(nome,contacto);
+                super(nome,contacto,password);
 		
                 this.modelo    = modelo;
 		this.matricula = matricula;
@@ -39,6 +39,17 @@ public class Taxista extends Cliente{
 	}
 	public void setNome(String nome) {
 		super.setNome(nome);
+	}
+	
+        /*****************************/
+        
+        /************Password***********/
+	
+	public String getPassword() {
+		return super.getPassword();
+	}
+	public void setPassword(String pass) {
+		super.setPassword(pass);
 	}
 	
         /*****************************/
