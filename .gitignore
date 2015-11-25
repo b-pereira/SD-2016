@@ -1,2 +1,91 @@
-/SD1516/nbproject/private/
-/SD1516/build/
+#===NETBEANS====
+
+#ant specific
+dist/
+build/
+ 
+#netbeans specific
+core
+nbproject/*
+!nbproject/project.properties
+!nbproject/project.xml
+ 
+#java specific
+*.class
+ 
+#general swap/backup files
+*.so
+*.log
+*.out
+*~
+*.swp
+*.DS_Store
+*.lock 
+
+#===ECLIPSE====
+
+# Directories #
+/build/
+/bin/
+target/
+# OS Files #
+.DS_Store
+*.class
+# Package Files #
+*.jar
+*.war
+*.ear
+*.db
+######################
+# Windows
+######################
+# Windows image file caches
+Thumbs.db
+# Folder config file
+Desktop.ini
+######################
+# OSX
+######################
+.DS_Store
+.svn
+# Thumbnails
+._*
+# Files that might appear on external disk
+.Spotlight-V100
+.Trashes
+######################
+# Eclipse
+######################
+*.pydevproject
+.project
+.metadata
+bin/**
+tmp/**
+tmp/**/*
+*.tmp
+*.bak
+*.swp
+*~.nib
+local.properties
+.classpath
+.settings/
+.loadpath
+/src/main/resources/rebel.xml
+# External tool builders
+.externalToolBuilders/
+# Locally stored "Eclipse launch configurations"
+*.launch
+# CDT-specific
+.cproject
+# PDT-specific
+.buildpath 
+
+#===BLUEJ====
+
+#Doc Ordner
+**/doc
+*.class
+*.pkh
+*.ctxt
+*.bluej
+.DS_Store
