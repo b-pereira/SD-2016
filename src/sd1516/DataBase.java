@@ -6,6 +6,7 @@
 package sd1516;
 
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Scanner;
 
 /**
@@ -14,8 +15,10 @@ import java.util.Scanner;
  */
 public class DataBase {
     
-    private HashMap<String, Cliente> clientes = new HashMap<String,Cliente>(); // <nome do cliente, objeto cliente>
+    private HashMap<String, Cliente> clientes; // <nome do cliente, objeto cliente>
     private Scanner scan = new Scanner(System.in);
+    
+    private HashMap<Posicao, String> taxistas; // <posicao do taxista, nome do taxista> Este hashMaps inclui apenas os taxistas que pretendem encontrar cliente e existe para se poderem calcular as distancias entre posicoes.
      
      public DataBase () {
          //Implementar busca a um ficheiro para encher o HashMap
@@ -23,7 +26,17 @@ public class DataBase {
          
      }
      
- 
+     
+     
+     public void atualizarPos (Posicao pos, String nome) {
+         Taxista tax = (Taxista) clientes.get(nome);
+         tax.setPos(pos);
+     }
+     
+     public Cliente getCliente (String nome) {
+         return clientes.get(nome);
+     }
+     
      public String getMatricula(String s1){
         
         Taxista tax = (Taxista) clientes.get(s1);
@@ -79,7 +92,7 @@ public class DataBase {
                 s5 = scan.next();
                 
                 System.out.println("A registar..");
-                clientes.put(s1, new Taxista(s4,s5,s1,s3,s2));
+                clientes.put(s1, new Taxista(new Posicao(0,0),s4,s5,s1,s3,s2)); //Todos os taxistas irão começar na posição x=0 e y=0, assuma-se que esta é a posicao da central dos taxistas.
                 System.out.println("\nRegistado com sucesso!");
                 return;
             }
@@ -91,9 +104,35 @@ public class DataBase {
         
     /****************************************************/
      
-     public String procurarTaxista (int xp, int yp) {
-         return "Hello World";
-     }
+    public String procurarTaxista (int xp, int yp) { // devolve nome do taxista mais perto da posicao argumento
+        Posicao pos;
+        String nome = null;
+        int i, j=0;
+        boolean primeiro = true;
+      
+        for(Entry<Posicao, String> e : taxistas.entrySet()) {
+            pos = e.getKey();
+            
+            i = calcularTemp (pos.getX(), pos.getY(), xp,yp);
+            
+            if (primeiro){
+                j = i; 
+                primeiro = false; 
+            }
+            
+            if (i<j){
+                j=i;
+                nome = e.getValue();
+            }
+        }
+        
+        return nome;
+    }
+    
+    
+    public void taxistaEspera (String nome, int x, int y) {
+        taxistas.put(new Posicao(x,y), nome);
+    }
      
      
     public int calcularTemp (int x, int y, int x1, int y1) {

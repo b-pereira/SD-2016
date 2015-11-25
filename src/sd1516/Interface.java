@@ -96,6 +96,8 @@ public class Interface {
 		System.out.println ("À espera de uma resposta..");            	
 		resposta = br.readLine(); 
                 System.out.println("Um taxi respondeu ao seu pedido e em breve virá ao seu encontro.");
+                resposta = br.readLine();
+                System.out.println("Nome do taxista: "+resposta);
                 System.out.println("Matricula: "+resposta);
                 resposta = br.readLine(); 
                 System.out.println("Modelo: " + resposta);
@@ -103,7 +105,7 @@ public class Interface {
                 x = Integer.parseInt(resposta);
                 resposta = br.readLine();
                 y = Integer.parseInt(resposta);
-                System.out.println("Está na posicao: " +x+","+y);
+                System.out.println("Está na posicao: ("+x+","+y+")");
                 System.out.println("Irá demorar: "+(calcularTemp (xp,yp,x,y))+" minutos a chegar a si"); //calcula tempo entre posicao do taxi e do cliente
                 resposta = br.readLine(); 
                 System.out.println("O taxi chegou até si.");

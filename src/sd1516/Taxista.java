@@ -11,25 +11,36 @@ package sd1516;
  */
 public class Taxista extends Cliente{
     
-           /** Variáveis de Classe ******************************/
-          /**/ private String modelo;    /*Modelo do veículo****/
-	 /**/ private String matricula; /*Matrícula do veículo*/
+            /** Variáveis de Classe ******************************/
+           /**/ private String modelo;    /*Modelo do veículo****/
+	  /**/ private String matricula; /*Matrícula do veículo*/
+         /**/ private Posicao pos;      /*Posicao do taxista***/
         /*****************************************************/
         
          
 	
         /***************Construtor***********/
          
-        public Taxista (String modelo, String matricula, String nome, String contacto, String password) {
+        public Taxista (Posicao pos, String modelo, String matricula, String nome, String contacto, String password) {
             
                 super(nome,contacto,password);
 		
                 this.modelo    = modelo;
 		this.matricula = matricula;
+                this.pos = pos;
                 
 	}
         
         /***********************************/
+        
+        
+        public void setPos(Posicao pos){
+            this.pos = pos;
+        }
+        
+        public Posicao getPos (){
+            return pos;
+        }
         
         
         /***************Nome***********/

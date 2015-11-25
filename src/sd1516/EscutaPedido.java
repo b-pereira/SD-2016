@@ -70,7 +70,14 @@ public class EscutaPedido implements Runnable{
                         int xc = Integer.parseInt(br.readLine());
                         int yc = Integer.parseInt(br.readLine());
                         
-                        db.procurarTaxista(xp,yp);
+                        Taxista tax = (Taxista) db.getCliente(db.procurarTaxista(xp,yp));
+                        
+                        pw.write(tax.getNome());
+                        pw.write(tax.getMatricula());
+                        pw.write(tax.getModelo());
+                        pw.write(tax.getPos().getX());
+                        pw.write(tax.getPos().getY());
+                        
 			break;
                 case PEDIDO_T:
                     
