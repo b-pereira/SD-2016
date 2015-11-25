@@ -72,7 +72,7 @@ public class Interface {
             try {
  
                 pw.write(PEDIDO_C);
-                pw.write(s1);
+                pw.write(s1); //Enviar nome
                 System.out.println("\nInsira o local de partida da viagem");
                 System.out.println ("Indique a posição x: ");
                 xp = scan.nextInt();
