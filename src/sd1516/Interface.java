@@ -12,7 +12,6 @@ package sd1516;
 
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.lang.*;
 import java.util.*;
 import java.io.*;
 
@@ -22,9 +21,18 @@ public class Interface {
         private String host;
         private Socket socket;
         private BufferedReader br;
-        private PrintWriter pw;  
+        private PrintWriter pw;
         
-  	private HashMap<String, Cliente> clientes = new HashMap<String,Cliente>(); // <nome do cliente, objeto cliente>
+        final static int LOGIN         = 1;
+        final static int SIGNIN        = 2;
+        final static int PEDIDO_C      = 3;
+        final static int PEDIDO_T      = 4;
+        final static int GET_MATRICULA = 5;
+        final static int GET_MODELO    = 6;
+        
+        final static int OK =  0;
+        final static int KO = -1;
+       
         private Scanner scan = new Scanner(System.in);
 
         
@@ -41,13 +49,29 @@ public class Interface {
             pw = new PrintWriter(os,true); // Este true serve para fazer auto flush.
         }
         
+        
+        public int logIn (String s1,String s2) throws IOException{
+            pw.write(LOGIN);
+            pw.write(s1);
+            pw.write(s2);
+            
+            return Integer.parseInt(br.readLine());
+        }
+        
+        public void signIn () throws IOException{
+            pw.write(SIGNIN);
+            
+            if (br.readLine().equals("KO")) System.out.println("Houve um erro a registá-lo como cliente, por favor tente novamente.");
+        }
+        
         public void pedidoCliente (String s1, String s2){
             String resposta;
             int x,y,xp,yp,xc,yc;
             
             System.out.println ("A enviar pedido..");
             try {
-             
+ 
+                pw.write(PEDIDO_C);
                 pw.write(s1);
                 System.out.println("\nInsira o local de partida da viagem");
                 System.out.println ("Indique a posição x: ");
@@ -96,16 +120,30 @@ public class Interface {
             
         }
         
+        public String getMatricula (String s1) throws IOException {
+            pw.write(GET_MATRICULA);
+            
+            return br.readLine();
+        }
+        
+        public String getModelo (String s1) throws IOException {
+            pw.write (GET_MODELO);
+            
+            return br.readLine();
+        }
+        
         public void pedidoTaxista (String s1, String s2) {
             String resposta;
             
             // Enviar pedido do taxista
             System.out.println ("A enviar pedido..");
             try {
+                
+                pw.write(PEDIDO_T);
                 pw.write(s1); //enviar nome
-                Taxista tax = (Taxista) (clientes.get(s2));
-                pw.write(tax.getMatricula()); //enviar matrícula
-                pw.write(tax.getModelo()); //enviar modelo
+               
+                pw.write(getMatricula(s1)); //enviar matrícula
+                pw.write(getModelo(s1)); //enviar modelo
                 System.out.println ("Indique a sua posição x: ");
                 pw.write(scan.nextInt()); //enviar x
                 System.out.println ("Indique a sua posição y: ");
@@ -134,65 +172,6 @@ public class Interface {
              //Assumiremos que demora um minuto a passar de uma posição para outra consecutiva.
             //Calcula o tempo usando a distancia Manhattam
             return Math.abs(x-x1) + Math.abs(y-y1);
-        }
-        
-        /****************************************************/
-        
-        /*****Log in*****************************************/
-        
-        public int logIn (String s1, String s2) {
-            
-            if (!(clientes.containsKey(s1))) return -1; // não existe
-            
-            Cliente z = clientes.get(s1);
-            
-            if (!(z.getPassword().equals(s2))) return -1; // password errada
-            
-            if (z.getClass().getName().equals("sd1516.Cliente")) return 0; // existe e é cliente
-            
-            return 1; // existe e é taxista
-        }
-        
-        /****************************************************/
-	
-        /**********************sign in***********************/
-        
-        public void signIn () {
-            String s1,s2,s3,s4,s5;
-            int i;
-            
-            System.out.println("\nPretende inscrever-se como cliente(1) ou taxista(2)?");
-            i = scan.nextInt();
-            
-            System.out.println("\nInsira o nome de utilizador a usar:");
-	    s1 = scan.next();
-            System.out.println("\nInsira a password a usar:");
-	    s2 = scan.next();
-            System.out.println("\nInsira o seu contacto:");
-	    s3 = scan.next();
-            
-            if (clientes.containsKey(s1)) {
-                
-                System.out.println("Já existe um cliente com este nome, por favor tente novamente.");
-                return;
-            }
-            
-            if (i == 2) {
-                System.out.println("\nInsira o modelo do seu carro:");
-                s4 = scan.next();
-
-                System.out.println("\nInsira a matricula do seu carro:");
-                s5 = scan.next();
-                
-                System.out.println("A registar..");
-                clientes.put(s1, new Taxista(s4,s5,s1,s3,s2));
-                System.out.println("\nRegistado com sucesso!");
-                return;
-            }
-            
-            System.out.println("A registar..");
-            clientes.put(s1, new Cliente(s1,s3,s2));
-            System.out.println("\nRegistado com sucesso!");
         }
         
         /****************************************************/
