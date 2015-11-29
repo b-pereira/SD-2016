@@ -9,6 +9,8 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Scanner;
 
+import sd1516.threads.EscutaPedido;
+
 /**
  *
  * @author ASUS

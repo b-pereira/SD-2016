@@ -8,6 +8,10 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Scanner;
 
+import sd1516.business.Cliente;
+import sd1516.business.Taxista;
+import sd1516.utils.Posicao;
+
 /**
  *
  * @author ASUS
@@ -39,29 +43,29 @@ public class DataBase {
     return clientes.get(nome);
   }
 
-  public String getMatricula(String s1) {
+  public String getMatricula(String matricula) {
 
-    Taxista tax = (Taxista) clientes.get(s1);
+    Taxista tax = (Taxista) clientes.get(matricula);
     return tax.getMatricula();
   }
 
-  public String getModelo(String s1) {
+  public String getModelo(String modelo) {
 
-    Taxista tax = (Taxista) clientes.get(s1);
+    Taxista tax = (Taxista) clientes.get(modelo);
     return tax.getModelo();
   }
 
-  public int logIn(String s1, String s2) {
+  public int logIn(String nome, String password) {
 
-    if (!(clientes.containsKey(s1)))
+    if (!(clientes.containsKey(nome)))
       return -1; // não existe
 
-    Cliente z = clientes.get(s1);
+    Cliente cliente = clientes.get(nome);
 
-    if (!(z.getPassword().equals(s2)))
+    if (!(cliente.getPassword().equals(password)))
       return -1; // password errada
 
-    if (z.getClass().getName().equals("sd1516.Cliente"))
+    if (cliente instanceof Cliente)
       return 0; // existe e é cliente
 
     return 1; // existe e é taxista
@@ -70,20 +74,20 @@ public class DataBase {
   /********************** sign in ***********************/
 
   public void signIn() {
-    String s1, s2, s3, s4, s5;
+    String nomeUtilizador, password, contato, modelo, matricula;
     int i;
 
     System.out.println("\nPretende inscrever-se como cliente(1) ou taxista(2)?");
     i = scan.nextInt();
 
     System.out.println("\nInsira o nome de utilizador a usar:");
-    s1 = scan.next();
+    nomeUtilizador = scan.next();
     System.out.println("\nInsira a password a usar:");
-    s2 = scan.next();
+    password = scan.next();
     System.out.println("\nInsira o seu contacto:");
-    s3 = scan.next();
+    contato = scan.next();
 
-    if (clientes.containsKey(s1)) {
+    if (clientes.containsKey(nomeUtilizador)) {
 
       System.out.println("Já existe um cliente com este nome, por favor tente novamente.");
       return;
@@ -91,24 +95,25 @@ public class DataBase {
 
     if (i == 2) {
       System.out.println("\nInsira o modelo do seu carro:");
-      s4 = scan.next();
+      modelo = scan.next();
 
       System.out.println("\nInsira a matricula do seu carro:");
-      s5 = scan.next();
+      matricula = scan.next();
 
       System.out.println("A registar..");
-      clientes.put(s1, new Taxista(new Posicao(0, 0), s4, s5, s1, s3, s2)); // Todos os taxistas
-                                                                            // irão começar na
-                                                                            // posição x=0 e y=0,
-                                                                            // assuma-se que esta é
-                                                                            // a posicao da central
-                                                                            // dos taxistas.
+      clientes.put(nomeUtilizador, new Taxista(new Posicao(0, 0), modelo, matricula,
+          nomeUtilizador, contato, password)); // Todos os taxistas
+      // irão começar na
+      // posição x=0 e y=0,
+      // assuma-se que esta é
+      // a posicao da central
+      // dos taxistas.
       System.out.println("\nRegistado com sucesso!");
       return;
     }
 
     System.out.println("A registar..");
-    clientes.put(s1, new Cliente(s1, s3, s2));
+    clientes.put(nomeUtilizador, new Cliente(nomeUtilizador, contato, password));
     System.out.println("\nRegistado com sucesso!");
   }
 
