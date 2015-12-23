@@ -5,9 +5,8 @@
 package sd1516;
 
 import java.io.*;
+import java.util.*;
 import java.net.ServerSocket;
-import java.net.Socket;
-import java.util.Scanner;
 
 import sd1516.threads.EscutaPedido;
 
@@ -15,66 +14,39 @@ import sd1516.threads.EscutaPedido;
  *
  * @author ASUS
  */
-public class Servidor extends Thread {
+public class Servidor {
 
-  final static int LOGIN = 1;
-  final static int SIGNIN = 2;
-  final static int PEDIDO_C = 3;
-  final static int PEDIDO_T = 4;
-  final static int GET_MATRICULA = 5;
-  final static int GET_MODELO = 6;
+    /**
+     * O port onde o servidar irá escutar.
+     */
+    private static final int PORT = 9001;
 
-  final static int OK = 0;
-  final static int KO = -1;
+    /**
+     * O conjunto de todos os inscritos (clientes e taxistas)
+     * e dos clientes/taxistas em espera.  
+     */
+    private static DataBase db;
+     
+     /**
+     * Set com os printwiters de todos os inscritos activos.
+     * Irá servir para se manter uma fácil comunicação com o servidor.
+     */
+    private static HashSet<PrintWriter> pws = new HashSet<PrintWriter>();
 
-  private int port;
-
-  private BufferedReader br;
-  private PrintWriter pw;
-
-  private DataBase clientes;
-  private Scanner scan = new Scanner(System.in);
-
-
-
-  public Servidor(int port) {
-    this.port = port;
-    this.clientes = new DataBase(); // Iremos implementar uma busca a um ficheiro para por clientes
-                                    // aqui sempre que se reinicia o servidor.
-
-  }
-
-
-
-  public static void main(String[] args) {
-    Servidor servidor = new Servidor(7262);
-    try {
-      ServerSocket sSocket = new ServerSocket(servidor.port);
-      while (true) {
-        System.out.println("À espera de clientes...");
-        Socket socket = sSocket.accept();
-        System.out.println("Cliente com o port " + (socket.getPort()) + " encontrado!");
-
-        InputStream is = socket.getInputStream();
-        OutputStream os = socket.getOutputStream();
-        InputStreamReader ir = new InputStreamReader(is);
-        servidor.br = new BufferedReader(ir);
-        servidor.pw = new PrintWriter(os, true); // Este true serve para fazer auto flush.
-
-        boolean continuar = true;
-        while (continuar) {
-          new Thread(new EscutaPedido(socket, servidor.clientes)).start();
+    /**
+     * O método main irá ouvir o port definido e lançar o handler.
+     */
+    public static void main(String[] args) throws Exception {
+        System.out.println("O programa de Taxis foi começado com sucesso.");
+        ServerSocket listener = new ServerSocket(PORT);
+        try {
+            while (true) {
+                new EscutaPedido(listener.accept(), db, pws).start();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            listener.close();
         }
-
-        System.out.println("Ligação com o cliente terminada.");
-        socket.shutdownInput();
-        socket.shutdownOutput();
-        socket.close();
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
     }
-  }
-
-
 }

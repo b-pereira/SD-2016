@@ -7,89 +7,147 @@ package sd1516.threads;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.HashSet;
 
 import sd1516.DataBase;
-import sd1516.business.Taxista;
 
 /**
  *
  * @author ASUS
  */
-public class EscutaPedido implements Runnable {
-  Socket socket;
-
-  final static int LOGIN = 1;
-  final static int SIGNIN = 2;
-  final static int PEDIDO_C = 3;
-  final static int PEDIDO_T = 4;
-  final static int GET_MATRICULA = 5;
-  final static int GET_MODELO = 6;
-
-  final static int OK = 0;
-  final static int KO = -1;
-
+public class EscutaPedido extends Thread {
+  private Socket socket;
+  private String nome;
+  private String password;
+  
   private BufferedReader br;
   private PrintWriter pw;
-
+  private HashSet<PrintWriter> pws = new HashSet<PrintWriter>();
   private DataBase db;
-  private Scanner scan = new Scanner(System.in);
 
-  public EscutaPedido(Socket socket, DataBase db) {
-    this.db = db;
-    this.socket = socket;
+  public EscutaPedido(Socket socket, DataBase db, HashSet pws) {
+    this.db         = db;
+    this.socket     = socket;
+    this.pws        = pws;
   }
 
+  
+  /**
+   * Interpreta o pedido do cliente desta thread.
+   */
   public void run() {
-    String nome, password;
-    try {
-      int opcao = Integer.parseInt(br.readLine());
+      
+       try {
 
-      switch (opcao) {
-        case LOGIN:
-          nome = br.readLine();
-          password = br.readLine();
-          pw.write(db.logIn(nome, password));
-          break;
-        case SIGNIN:
-          db.signIn();
-          pw.write(OK);
-          break;
-        case GET_MATRICULA:
-          nome = br.readLine();
-          pw.write(db.getMatricula(nome));
-          break;
-        case GET_MODELO:
-          nome = br.readLine();
-          pw.write(db.getModelo(nome));
-          break;
-        case PEDIDO_C:
-          nome = br.readLine();
+            InputStream       is = socket.getInputStream();  
+            OutputStream      os = socket.getOutputStream();  
+            InputStreamReader ir = new InputStreamReader(is);
+            br = new BufferedReader(ir);
+            pw = new PrintWriter(os,true); // Este true serve para fazer auto flush.
+            int opcao;
 
-          int xp = Integer.parseInt(br.readLine());
-          int yp = Integer.parseInt(br.readLine());
+            while (true) {
+                    pw.println("Pretende fazer LogIn(1) ou SignIn(2)?");
+                    opcao = Integer.parseInt(br.readLine());
+                    
+                    if (opcao == 1) { //login
+                        while (true) {
+        		    pw.println("\nInsira o seu nome de utilizador:");
+			    nome = br.readLine();
 
-          int xc = Integer.parseInt(br.readLine());
-          int yc = Integer.parseInt(br.readLine());
+			    pw.println("\nInsira a sua password:");	
+			    password = br.readLine();
 
-          Taxista tax = (Taxista) db.getCliente(db.procurarTaxista(xp, yp));
-
-          pw.write(tax.getNome());
-          pw.write(tax.getMatricula());
-          pw.write(tax.getModelo());
-          pw.write(tax.getPos().getX());
-          pw.write(tax.getPos().getY());
-
-          break;
-        case PEDIDO_T:
-
-          break;
-        default:
-          System.out.println("Erro...");
-          pw.write(KO);
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
+                            if ((db.logIn(nome, password)) == 0) { //É um cliente
+                                pw.println ("Bem vindo cliente "+nome);
+                                          
+                                pw.println ("Pretende entrar no chat(1), procurar um taxista(2) ou sair(3)?");
+                                opcao = Integer.parseInt(br.readLine());
+                                    
+                                    if (opcao == 1) { //chat
+                                        /**
+                                         * Adicionar o print writer do scoket deste cliente ao set 
+                                         * com todos os print writers para assim ele receber mensagens.
+                                         */
+                                        pws.add(pw);
+                                    
+                                        /**
+                                         * Aceitar mensagens deste cliente e enviá-las.
+                                         */
+                                        while (true) {
+                                            String input = br.readLine();
+                                            for (PrintWriter escritor : pws) {
+                                                escritor.println( "-> Cliente " + nome + " diz: " + input);
+                                            }
+                                        }
+                                    }
+                                    
+                                                                        
+                                    if (opcao == 2) {
+                                        //pedido
+                                    }
+                                    
+                                    if (opcao == 3) {return;}
+                            }
+                        
+                            if ((db.logIn(nome, password)) == 1) { //É um taxista
+                                pw.println ("Bem vindo taxista "+nome);
+                                          
+                                while (true) {
+                                    pw.println ("Pretende entrar no chat(1), procurar um cliente(2) ou sair(3)?");
+                                    opcao = Integer.parseInt(br.readLine());
+                                    
+                                    if (opcao == 1) { //chat
+                                    pw.println("chat");
+                                        /**
+                                         * Adicionar o print writer do scoket deste cliente ao set 
+                                         * com todos os print writers para assim ele receber mensagens.
+                                         */
+                                        pws.add(pw);
+                                    
+                                        /**
+                                         * Aceitar mensagens deste cliente e enviá-las.
+                                         */
+                                        while (true) {
+                                            String input = br.readLine();
+                                            for (PrintWriter escritor : pws) {
+                                                escritor.println( "-> Taxista " + nome + " diz: " + input);
+                                            }
+                                        }
+                                    }
+                                    
+                                    if (opcao == 2) {
+                                        //pedido
+                                    }
+                                    
+                                    if (opcao == 3) {return;}
+                                }
+                            }    
+                            
+                            if ((db.logIn(nome, password)) == -1) { // Log in inválido
+                                pw.println("\nLog in inválido, por favor tente novamente.");
+                                continue;
+                            }
+                        }
+                    }
+                  
+                    if (opcao == 2) { //signin
+                        db.signIn();
+                    }
+            }
+        } catch (IOException e) {
+            System.out.println(e);
+        } finally {
+            if (pw != null) pws.remove(pw);
+            try {
+                socket.shutdownOutput();
+                socket.close();
+         
+            } catch (IOException e) {
+                System.out.println(e);
+            }
+        }
     }
-  }
 }
+             
+      
