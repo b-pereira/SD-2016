@@ -4,29 +4,32 @@
  */
 package sd1516.business;
 
+import sd1516.utils.Posicao;
+
 /**
  *
  * @author ASUS
  */
 public class Cliente {
 
-  /** Variáveis de Classe ****************************/
-  /**/private String nome; /* Nome do cliente**** */
-  /**/private String contacto; /* Contacto do cliente */
-  /**/private String password; /* Password do cliente */
-
-  /***************************************************/
+       /** Variáveis de Classe *****************************/
+      /**/private String nome; /* Nome do cliente**********/
+     /**/private String contacto; /* Contacto do cliente */
+    /**/private String password; /* Password do cliente */
+   /**/private Posicao pos; /* Posição do cliente ******/
+  /****************************************************/
 
 
 
   /************* Construtor *********/
 
-  public Cliente(String nome, String contacto, String password) {
+  public Cliente(String nome, String contacto, String password, Posicao pos) {
     this.nome = nome;
     this.contacto = contacto;
     this.password = password;
+    this.pos = pos;
   }
-
+ 
   /********************************/
 
   /*************** Nome ***********/
@@ -41,7 +44,16 @@ public class Cliente {
 
   /*****************************/
 
-
+  
+  public Posicao getPos () {
+      return pos;
+  } 
+  
+  public void setPos(Posicao pos) {
+      this.pos = pos;
+  }
+  
+  
   /************ Password ***********/
 
   public String getPassword() {

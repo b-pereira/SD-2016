@@ -34,26 +34,7 @@ public class Interface {
     /***********************************************************************************/    
     JFrame frame = new JFrame("Chat");
     JTextField textField = new JTextField(40);
-    JTextArea messageArea = new JTextArea(8, 40);
-     
-     
-     // variáveis estáticas (tipos de pedidos e tipos de respostas)
-    
-           /***************Pedidos*******************************************/
-          /**/ final static int LOGIN         = 1; /**pedir autentificação**/
-         /**/ final static int SIGNIN        = 2; /**pedir inscrição*******/
-        /**/ final static int PEDIDO_C      = 3; /**pedir cliente*********/
-       /**/ final static int PEDIDO_T      = 4; /**pedir taxista*********/
-      /**/ final static int GET_MATRICULA = 5; /**pedir matricula*******/
-     /**/ final static int GET_MODELO    = 6; /**pedir modelo**********/
-    /*****************************************************************/
-      
-     
-       /*********respostas****************************************/
-      /**/ final static int OK =  0; /**responder com sucesso****/
-     /**/ final static int KO = -1; /**responder com insucesso**/
-    /**********************************************************/
-     
+    JTextArea messageArea = new JTextArea(8, 40);     
 
      public Interface() {
 
@@ -64,7 +45,7 @@ public class Interface {
         frame.getContentPane().add(new JScrollPane(messageArea), "Center");
         frame.pack();
 
-        // Add Listeners
+
         textField.addActionListener(new ActionListener() {
             /**
              * Envia o que foi escrito na área de texto.
@@ -78,32 +59,48 @@ public class Interface {
     }
      
     private String mensagem( String s1, String s2) {
-        return JOptionPane.showInputDialog(
-            frame,
-            s1,
-            s2,
-            JOptionPane.PLAIN_MESSAGE);
+        return JOptionPane.showInputDialog(frame,s1,s2,JOptionPane.PLAIN_MESSAGE);
     }
      
     private void iniciar() throws IOException {
 
         // Conectar ao servidor e definir o escritor e o leitor.
         String serverIP = mensagem("Indique o endereço IP do servidor.(exemplo: localHost)","Taxis");
-        Socket socket = new Socket(serverIP, 7229);
+        Socket socket = new Socket(serverIP, 9001);
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pw = new PrintWriter(socket.getOutputStream(), true); // true serve para fazer auto flush
+        String saudacoes = "Bem vindo";
         
         while (true) {
             String line = br.readLine();
-            if (line.startsWith("Pretende fazer LogIn(1) ou SignIn(2)?")) {
-                pw.println((mensagem("Pretende fazer LogIn(1) ou SignIn(2)?", "Taxis")));
-            } else if (line.startsWith("chat")) { // O cliente mostrou interesse em participar no chat.
+            
+            if (line.startsWith("Pretende fazer LogIn(1) ou SignIn(2)?")) { 
+                pw.println((mensagem(line, "Taxis")));
+            } 
+            
+            else if (line.startsWith("chat")) { // O cliente mostrou interesse em participar no chat.
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
                 textField.setEditable(true); 
             } else if (line.startsWith("->")) { //Recebemos uma mensagem do chat.
                 messageArea.append(line + "\n"); 
             } 
+            
+            else if (line.startsWith("Insira o seu nome de utilizador:")){ //Pedimos nome de utilizador.
+                pw.println((mensagem(line, "Autentificação")));
+            } 
+            
+            else if (line.startsWith("Insira a sua password:")){ //Pedimos password.
+                pw.println((mensagem(line, "Autentificação")));
+            } 
+            
+            else if (line.startsWith("Bem vindo")){ //Utilizador fez LogIn.
+                saudacoes = line;
+            } 
+            
+            else if (line.startsWith("Pretende entrar no chat(1), procurar um taxista(2) ou sair(3)?")){
+                pw.println((mensagem(line, saudacoes)));
+            }
         }
     }
 

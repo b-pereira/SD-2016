@@ -7,7 +7,6 @@ package sd1516.threads;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.HashSet;
 
 import sd1516.DataBase;
 
@@ -16,22 +15,23 @@ import sd1516.DataBase;
  * @author ASUS
  */
 public class EscutaPedido extends Thread {
-  private Socket socket;
+  private final Socket socket;
   private String nome;
   private String password;
   
   private BufferedReader br;
   private PrintWriter pw;
-  private HashSet<PrintWriter> pws = new HashSet<PrintWriter>();
   private DataBase db;
 
-  public EscutaPedido(Socket socket, DataBase db, HashSet pws) {
+  public EscutaPedido(Socket socket, DataBase db) {
     this.db         = db;
     this.socket     = socket;
-    this.pws        = pws;
   }
 
-  
+  public void enviaMensagem() throws IOException{
+       String mensagem = br.readLine();
+       db.enviaMensagem(mensagem, nome);
+  }
   /**
    * Interpreta o pedido do cliente desta thread.
    */
@@ -52,10 +52,10 @@ public class EscutaPedido extends Thread {
                     
                     if (opcao == 1) { //login
                         while (true) {
-        		    pw.println("\nInsira o seu nome de utilizador:");
+        		    pw.println("Insira o seu nome de utilizador:");
 			    nome = br.readLine();
 
-			    pw.println("\nInsira a sua password:");	
+			    pw.println("Insira a sua password:");	
 			    password = br.readLine();
 
                             if ((db.logIn(nome, password)) == 0) { //É um cliente
@@ -69,16 +69,13 @@ public class EscutaPedido extends Thread {
                                          * Adicionar o print writer do scoket deste cliente ao set 
                                          * com todos os print writers para assim ele receber mensagens.
                                          */
-                                        pws.add(pw);
+                                        db.adicionaEscritor(pw);
                                     
                                         /**
                                          * Aceitar mensagens deste cliente e enviá-las.
                                          */
                                         while (true) {
-                                            String input = br.readLine();
-                                            for (PrintWriter escritor : pws) {
-                                                escritor.println( "-> Cliente " + nome + " diz: " + input);
-                                            }
+                                            enviaMensagem();
                                         }
                                     }
                                     
@@ -103,16 +100,13 @@ public class EscutaPedido extends Thread {
                                          * Adicionar o print writer do scoket deste cliente ao set 
                                          * com todos os print writers para assim ele receber mensagens.
                                          */
-                                        pws.add(pw);
+                                        db.adicionaEscritor(pw);
                                     
                                         /**
                                          * Aceitar mensagens deste cliente e enviá-las.
                                          */
                                         while (true) {
-                                            String input = br.readLine();
-                                            for (PrintWriter escritor : pws) {
-                                                escritor.println( "-> Taxista " + nome + " diz: " + input);
-                                            }
+                                            enviaMensagem();
                                         }
                                     }
                                     
@@ -126,7 +120,6 @@ public class EscutaPedido extends Thread {
                             
                             if ((db.logIn(nome, password)) == -1) { // Log in inválido
                                 pw.println("\nLog in inválido, por favor tente novamente.");
-                                continue;
                             }
                         }
                     }
@@ -138,7 +131,7 @@ public class EscutaPedido extends Thread {
         } catch (IOException e) {
             System.out.println(e);
         } finally {
-            if (pw != null) pws.remove(pw);
+            if (pw != null) db.removeEscritor(pw);
             try {
                 socket.shutdownOutput();
                 socket.close();

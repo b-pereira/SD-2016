@@ -27,21 +27,16 @@ public class Servidor {
      */
     private static DataBase db;
      
-     /**
-     * Set com os printwiters de todos os inscritos activos.
-     * Irá servir para se manter uma fácil comunicação com o servidor.
-     */
-    private static HashSet<PrintWriter> pws = new HashSet<PrintWriter>();
 
     /**
-     * O método main irá ouvir o port definido e lançar o handler.
+     * O método main irá ouvir o port definido e lançar threads para cada utilizador aceite.
      */
     public static void main(String[] args) throws Exception {
         System.out.println("O programa de Taxis foi começado com sucesso.");
         ServerSocket listener = new ServerSocket(PORT);
         try {
             while (true) {
-                new EscutaPedido(listener.accept(), db, pws).start();
+                new EscutaPedido(listener.accept(), db).start();
             }
         } catch (IOException e) {
             e.printStackTrace();
