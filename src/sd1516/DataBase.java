@@ -82,7 +82,7 @@ public class DataBase {
         return tax.getModelo();  
     }
     
-    public synchronized int logIn (String s1, String s2, PrintWriter pw, BufferedReader br) throws IOException{
+    public int logIn (String s1, String s2, PrintWriter pw, BufferedReader br) throws IOException{
         int i;
         
         if (!(inscritos.containsKey(s1))) return -1; // não existe
@@ -95,11 +95,11 @@ public class DataBase {
         
         while (true){
            
-            pw.println("\nFoi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?");
+            pw.println("Foi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?");
             i = Integer.parseInt(br.readLine());
             if (i == 1) return 0;
             if (i == 2) break;
-            else pw.println("\nOpção inválida.");
+            else pw.println("Opção inválida.");
         }
             
         return 1; // existe e é taxista
@@ -107,10 +107,10 @@ public class DataBase {
 
     /**********************sign in***********************/
         
-    public synchronized int signIn (PrintWriter pw, BufferedReader br) throws IOException{
+    public void signIn (PrintWriter pw, BufferedReader br) throws IOException{
             String s1,s2,s3,s4,s5;
             int i;
-            
+
             while (true) {
                 pw.println("Pretende inscrever-se como cliente(1) ou taxista(2)?");
                 i = Integer.parseInt(br.readLine());
@@ -129,7 +129,7 @@ public class DataBase {
             if (inscritos.containsKey(s1)) {
                 
                 pw.println("Já existe um cliente com este nome, por favor tente novamente.");
-                return -1;
+                return;
             }
             
             if (i == 2) {
@@ -142,13 +142,12 @@ public class DataBase {
                 pw.println("A registar..");
                 inscritos.put(s1, new Taxista(new Posicao(0,0),s4,s5,s1,s3,s2)); //Todos os taxistas irão começar na posição x=0 e y=0, assuma-se que esta é a posicao da central dos taxistas.
                 pw.println("Registado com sucesso!");
-                return 0;
+                return;
             }
             
             pw.println("A registar..");
             inscritos.put(s1, new Cliente(s1,s3,s2, new Posicao(0,0)));
             pw.println("Registado com sucesso!");
-            return 0;
     }
         
     /****************************************************/

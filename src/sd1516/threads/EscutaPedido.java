@@ -21,7 +21,7 @@ public class EscutaPedido extends Thread {
   
   private BufferedReader br;
   private PrintWriter pw;
-  private DataBase db;
+  private final DataBase db;
 
   public EscutaPedido(Socket socket, DataBase db) {
     this.db         = db;
@@ -35,8 +35,9 @@ public class EscutaPedido extends Thread {
   /**
    * Interpreta o pedido do cliente desta thread.
    */
+  @Override
   public void run() {
-      
+       boolean chat = false;
        try {
 
             InputStream       is = socket.getInputStream();  
@@ -45,20 +46,27 @@ public class EscutaPedido extends Thread {
             br = new BufferedReader(ir);
             pw = new PrintWriter(os,true); // Este true serve para fazer auto flush.
             int opcao;
-
+            String linha;
+            
             while (true) {
                     pw.println("Pretende fazer LogIn(1) ou SignIn(2)?");
-                    opcao = Integer.parseInt(br.readLine());
                     
+                    linha = br.readLine();
+                    if (linha == null) continue;
+                    
+                    opcao = Integer.parseInt(linha);
+
                     if (opcao == 1) { //login
                         while (true) {
         		    pw.println("Insira o seu nome de utilizador:");
 			    nome = br.readLine();
-
+                            
 			    pw.println("Insira a sua password:");	
 			    password = br.readLine();
-
-                            if (db.logIn(nome, password, pw, br) == 0) { //É um cliente
+                            
+                            opcao = db.logIn(nome, password, pw, br);
+                            
+                            if (opcao == 0) { //É um cliente
                                 pw.println ("Bem vindo cliente "+nome);
                                           
                                 pw.println ("Pretende entrar no chat(1), procurar um taxista(2) ou sair(3)?");
@@ -70,7 +78,7 @@ public class EscutaPedido extends Thread {
                                          * com todos os print writers para assim ele receber mensagens do chat.
                                          */
                                         db.adicionaEscritor(pw);
-                                    
+                                        chat = true;
                                         /**
                                          * Aceitar mensagens deste cliente e enviá-las para o chat.
                                          */
@@ -87,7 +95,7 @@ public class EscutaPedido extends Thread {
                                     if (opcao == 3) {return;}
                             }
                         
-                            if (db.logIn(nome, password,pw,br) == 1) { //É um taxista
+                            if (opcao == 1) { //É um taxista
                                 pw.println ("Bem vindo taxista "+nome);
                                           
                                 while (true) {
@@ -101,7 +109,7 @@ public class EscutaPedido extends Thread {
                                          * com todos os print writers para assim ele receber mensagens.
                                          */
                                         db.adicionaEscritor(pw);
-                                    
+                                        chat = true;
                                         /**
                                          * Aceitar mensagens deste cliente e enviá-las.
                                          */
@@ -118,8 +126,8 @@ public class EscutaPedido extends Thread {
                                 }
                             }    
                             
-                            if (db.logIn(nome, password,pw,br) == -1) { // Log in inválido
-                                pw.println("\nLogIn inválido, por favor tente novamente.");
+                            if (opcao == -1) { // Log in inválido
+                                pw.println("LogIn inválido, por favor tente novamente.");
                             }
                         }
                     }
@@ -131,7 +139,7 @@ public class EscutaPedido extends Thread {
         } catch (IOException e) {
             System.out.println(e);
         } finally {
-            if (pw != null) db.removeEscritor(pw); //Tira do chat para o caso de ter lá entrado
+            if (pw != null && chat) db.removeEscritor(pw); //Tira do chat para o caso de ter lá entrado
             try {
                 socket.shutdownOutput();
                 socket.close();

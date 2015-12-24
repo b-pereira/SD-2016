@@ -11,7 +11,6 @@ package sd1516;
  */
 
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.Socket;
 import java.io.*;
 import javax.swing.JFrame;
@@ -28,7 +27,6 @@ public class Interface {
           /***********************************************************************************/
          /**/ private int port;          /**port*********************************************/
         /**/ private String host;       /**IP do host***************************************/
-       /**/ private Socket socket;     /**socket*******************************************/
       /**/ private BufferedReader br; /**variável para leitura****************************/
      /**/ private PrintWriter pw;    /**variável para escrita****************************/ 
     /***********************************************************************************/    
@@ -49,16 +47,13 @@ public class Interface {
         frame.pack();
 
 
-        textField.addActionListener(new ActionListener() {
-            /**
-             * Envia o que foi escrito na área de texto.
-             * De seguida apaga para que o cliente possa escrever outra mensagem.
-             */
-            public void actionPerformed(ActionEvent e) {
-                pw.println(textField.getText()); // Enviar a mensagem para o print writer.
-                textField.setText(""); //Apagar a mensagem escrita na área de texto.
-            }
-        });
+        textField.addActionListener((ActionEvent e) -> {
+            pw.println(textField.getText()); // Enviar a mensagem para o print writer.
+            textField.setText(""); //Apagar a mensagem escrita na área de texto.
+        } /**
+         * Envia o que foi escrito na área de texto.
+         * De seguida apaga para que o cliente possa escrever outra mensagem.
+         */ );
     }
      
     private String mensagem( String s1, String s2) {
@@ -66,10 +61,11 @@ public class Interface {
     }
      
     private void iniciar() throws IOException {
-
+        
+        JOptionPane.showMessageDialog(null, "Bem vindo ao serviço de Taxis!");
         // Conectar ao servidor e definir o escritor e o leitor.
         String serverIP = mensagem("Indique o endereço IP do servidor.(exemplo: localHost)","Taxis");
-        Socket socket = new Socket(serverIP, 9001);
+        Socket socket = new Socket(serverIP, 7229);
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pw = new PrintWriter(socket.getOutputStream(), true); // true serve para fazer auto flush
         String saudacoes = "Bem vindo";
@@ -77,7 +73,9 @@ public class Interface {
         while (true) {
             String line = br.readLine();
             
-            if (line.startsWith("Pretende fazer LogIn(1) ou SignIn(2)?")) { 
+            if (line == null) continue;
+            
+            else if (line.startsWith("Pretende fazer LogIn(1) ou SignIn(2)?")) { 
                 pw.println((mensagem(line, "Taxis")));
             } 
             
@@ -150,7 +148,13 @@ public class Interface {
                 pw.println((mensagem(line, "SignIn")));
             }
             
+            else if (line.startsWith("Foi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?")){
+                pw.println((mensagem(line, "LognIn")));
+            }
             
+            else if (line.startsWith("LogIn inválido, por favor tente novamente.")){
+                JOptionPane.showMessageDialog(null, line);
+            }
         }
     }
 

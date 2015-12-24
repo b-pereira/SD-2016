@@ -4,8 +4,7 @@
  */
 package sd1516;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
 import java.net.ServerSocket;
 
 import sd1516.threads.EscutaPedido;
@@ -19,27 +18,41 @@ public class Servidor {
     /**
      * O port onde o servidar irá escutar.
      */
-    private static final int PORT = 9001;
+    private static final int PORT = 7229;
 
     /**
      * O conjunto de todos os inscritos (clientes e taxistas)
      * e dos clientes/taxistas em espera.  
      */
-    private static DataBase db;
+    private DataBase db;
      
+    
+    public Servidor (String ficheiro) {
+        //preenche db com os dados no ficheiro.
+        db = null;
+    }
 
+    public DataBase getDataBase (){
+        return db;
+    }
+    
     /**
      * O método main irá ouvir o port definido e lançar threads para cada utilizador aceite.
+     * @param args
+     * @throws java.lang.Exception
      */
     public static void main(String[] args) throws Exception {
+        Servidor servidor = new Servidor ("dados");
         System.out.println("O programa de Taxis foi começado com sucesso.");
-        ServerSocket listener = new ServerSocket(PORT);
+        ServerSocket listener;
+        listener = new ServerSocket(PORT);
+        
         try {
             while (true) {
-                new EscutaPedido(listener.accept(), db).start();
+                new EscutaPedido(listener.accept(), servidor.getDataBase()).start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.out.println(e);
         } finally {
             listener.close();
         }
