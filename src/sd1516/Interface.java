@@ -25,17 +25,20 @@ public class Interface {
     
     /***************Variáveis de Classe*************/
     
-           /***********************************************************************************/
-          /**/ private int port;          /**port*********************************************/
-         /**/ private String host;       /**IP do host***************************************/
-        /**/ private Socket socket;     /**socket*******************************************/
+          /***********************************************************************************/
+         /**/ private int port;          /**port*********************************************/
+        /**/ private String host;       /**IP do host***************************************/
+       /**/ private Socket socket;     /**socket*******************************************/
       /**/ private BufferedReader br; /**variável para leitura****************************/
      /**/ private PrintWriter pw;    /**variável para escrita****************************/ 
     /***********************************************************************************/    
-    JFrame frame = new JFrame("Chat");
-    JTextField textField = new JTextField(40);
+   
+     /** Janela de chat **/
+    JFrame frame          = new JFrame("Chat");
+    JTextField textField  = new JTextField(40);
     JTextArea messageArea = new JTextArea(8, 40);     
-
+    /********************/
+    
      public Interface() {
 
         // Definir GUI
@@ -87,20 +90,67 @@ public class Interface {
             } 
             
             else if (line.startsWith("Insira o seu nome de utilizador:")){ //Pedimos nome de utilizador.
-                pw.println((mensagem(line, "Autentificação")));
+                pw.println((mensagem(line, "LogIn")));
             } 
             
             else if (line.startsWith("Insira a sua password:")){ //Pedimos password.
-                pw.println((mensagem(line, "Autentificação")));
+                pw.println((mensagem(line, "LogIn")));
             } 
             
             else if (line.startsWith("Bem vindo")){ //Utilizador fez LogIn.
                 saudacoes = line;
+                JOptionPane.showMessageDialog(null, saudacoes);
             } 
             
             else if (line.startsWith("Pretende entrar no chat(1), procurar um taxista(2) ou sair(3)?")){
                 pw.println((mensagem(line, saudacoes)));
             }
+            
+            else if (line.startsWith("Pretende inscrever-se como cliente(1) ou taxista(2)?")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+           
+            else if (line.startsWith("Opção inválida.")){
+                JOptionPane.showMessageDialog(null, line);
+            }
+            
+            else if (line.startsWith("Insira o nome de utilizador a usar:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            
+            else if (line.startsWith("Insira a password a usar:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            
+            else if (line.startsWith("Insira o seu contacto:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            
+            else if (line.startsWith("Já existe um cliente com este nome, por favor tente novamente.")){
+                JOptionPane.showMessageDialog(null, line);
+            }
+            
+            else if (line.startsWith("Insira o seu contacto:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            
+            else if (line.startsWith("Insira o modelo do seu carro:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            
+            else if (line.startsWith("Insira a matricula do seu carro:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            
+            else if (line.startsWith("Registado com sucesso!")){
+                JOptionPane.showMessageDialog(null, line);
+            }
+            
+            else if (line.startsWith("Insira a matricula do seu carro:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            
+            
         }
     }
 

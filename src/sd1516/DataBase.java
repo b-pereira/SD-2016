@@ -5,11 +5,12 @@
  */
 package sd1516;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.PrintWriter;
 import static java.lang.Thread.sleep;
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.Scanner;
 import sd1516.business.Cliente;
 import sd1516.business.Taxista;
 import sd1516.utils.Posicao;
@@ -19,15 +20,18 @@ import sd1516.utils.Posicao;
  */
 public class DataBase {
     
-    private HashMap<String, Cliente> inscritos; // <nome do inscrito, objeto cliente> Este HashMap inclui todos os inscritos no sistema, clientes ou taxistas.
-    private Scanner scan = new Scanner(System.in);
+    /**
+     * <nome do inscrito, objeto cliente> Este HashMap inclui todos os inscritos no sistema, clientes ou taxistas.
+     * Serve para fazer LogIn e SignIn.
+     */
+    private HashMap<String, Cliente> inscritos;
     
     private HashMap<Posicao, String> taxistas;  // <posicao do taxista, nome do taxista> Este HashMap inclui apenas os taxistas que pretendem encontrar cliente.
     private Queue<Cliente> clientes; // Esta queue inclui apenas os clientes que pretendem encontrar taxista.
     
-         /**
+     /**
      * Set com os printwiters de todos os inscritos activos.
-     * Irá servir para se manter uma fácil comunicação com o servidor.
+     * Irá servir para se manter uma fácil comunicação com o servidor para o chat.
      */
     private static HashSet<PrintWriter> pws = new HashSet<PrintWriter>();
     
@@ -78,7 +82,7 @@ public class DataBase {
         return tax.getModelo();  
     }
     
-    public synchronized int logIn (String s1, String s2) {
+    public synchronized int logIn (String s1, String s2, PrintWriter pw, BufferedReader br) throws IOException{
         int i;
         
         if (!(inscritos.containsKey(s1))) return -1; // não existe
@@ -91,11 +95,11 @@ public class DataBase {
         
         while (true){
            
-            System.out.println("\nFoi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?");
-            i = scan.nextInt();
+            pw.println("\nFoi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?");
+            i = Integer.parseInt(br.readLine());
             if (i == 1) return 0;
             if (i == 2) break;
-            else System.out.println("\nOpção inválida.");
+            else pw.println("\nOpção inválida.");
         }
             
         return 1; // existe e é taxista
@@ -103,47 +107,47 @@ public class DataBase {
 
     /**********************sign in***********************/
         
-    public synchronized int signIn () {
+    public synchronized int signIn (PrintWriter pw, BufferedReader br) throws IOException{
             String s1,s2,s3,s4,s5;
             int i;
             
             while (true) {
-                System.out.println("\nPretende inscrever-se como cliente(1) ou taxista(2)?");
-                i = scan.nextInt();
+                pw.println("Pretende inscrever-se como cliente(1) ou taxista(2)?");
+                i = Integer.parseInt(br.readLine());
                 
                 if (i == 1 || i == 2) break;
-                else System.out.println("\nOpção inválida.");
+                else pw.println("Opção inválida.");
             }
             
-            System.out.println("\nInsira o nome de utilizador a usar:");
-	    s1 = scan.next();
-            System.out.println("\nInsira a password a usar:");
-	    s2 = scan.next();
-            System.out.println("\nInsira o seu contacto:");
-	    s3 = scan.next();
+            pw.println("Insira o nome de utilizador a usar:");
+	    s1 = br.readLine();
+            pw.println("Insira a password a usar:");
+	    s2 = br.readLine();
+            pw.println("Insira o seu contacto:");
+	    s3 = br.readLine();
             
             if (inscritos.containsKey(s1)) {
                 
-                System.out.println("Já existe um cliente com este nome, por favor tente novamente.");
+                pw.println("Já existe um cliente com este nome, por favor tente novamente.");
                 return -1;
             }
             
             if (i == 2) {
-                System.out.println("\nInsira o modelo do seu carro:");
-                s4 = scan.next();
+                pw.println("Insira o modelo do seu carro:");
+                s4 = br.readLine();
 
-                System.out.println("\nInsira a matricula do seu carro:");
-                s5 = scan.next();
+                pw.println("Insira a matricula do seu carro:");
+                s5 = br.readLine();
                 
-                System.out.println("A registar..");
+                pw.println("A registar..");
                 inscritos.put(s1, new Taxista(new Posicao(0,0),s4,s5,s1,s3,s2)); //Todos os taxistas irão começar na posição x=0 e y=0, assuma-se que esta é a posicao da central dos taxistas.
-                System.out.println("\nRegistado com sucesso!");
+                pw.println("Registado com sucesso!");
                 return 0;
             }
             
-            System.out.println("A registar..");
+            pw.println("A registar..");
             inscritos.put(s1, new Cliente(s1,s3,s2, new Posicao(0,0)));
-            System.out.println("\nRegistado com sucesso!");
+            pw.println("Registado com sucesso!");
             return 0;
     }
         
