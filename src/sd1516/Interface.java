@@ -76,10 +76,14 @@ public class Interface {
         while (true) {
             String line = br.readLine();
             
+            /*************INICIO***************/
             if ("INICIO".equals(line)) { 
                 pw.println((mensagem("Pretende fazer LogIn(1) ou SignIn(2)?", "Taxis")));
             } 
+            /**********************************/
             
+            
+            /*************CHAT*****************/
             else if (line.startsWith("CHAT")) { // O cliente mostrou interesse em participar no chat.
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setVisible(true);
@@ -87,12 +91,58 @@ public class Interface {
             } else if (line.startsWith("->")) { //Recebemos uma mensagem do chat.
                 messageArea.append(line + "\n"); 
             } 
+            /***********************************/
             
+            
+            /************LOGIN******************/
             else if ("LOGIN".equals(line)){
                 pw.println((mensagem("Insira o seu nome de utilizador:", "LogIn")));
                 pw.println((mensagem("Insira a sua password:", "LogIn")));
             } 
+            else if (line.startsWith("TAXISTA")){
+                pw.println((mensagem("Foi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?", "SignIn")));
+            }
+            else if (line.startsWith("LogInKO")){
+                JOptionPane.showMessageDialog(null, "LogIn inválido, por favor tente novamente.");
+            }
+            /**********************************/
             
+            
+            /****************SIGNIN*************/
+            else if (line.startsWith("Pretende inscrever-se como cliente(1) ou taxista(2)?")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            else if (line.startsWith("Insira o nome de utilizador a usar:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            else if (line.startsWith("Insira a password a usar:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            else if (line.startsWith("Insira o seu contacto:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            else if (line.startsWith("SignInKO")){
+                JOptionPane.showMessageDialog(null, "Já existe um cliente com este nome, por favor tente novamente.");
+            }
+            else if (line.startsWith("Insira o seu contacto:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            else if (line.startsWith("Insira o modelo do seu carro:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            else if (line.startsWith("Insira a matricula do seu carro:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            else if (line.startsWith("Registado com sucesso!")){
+                JOptionPane.showMessageDialog(null, line);
+            }
+            else if (line.startsWith("Insira a matricula do seu carro:")){
+                pw.println((mensagem(line, "SignIn")));
+            }
+            /**********************************/
+            
+            
+            /***********SAUDACOES**************/
             else if (line.startsWith("Bem vindo cliente")){ //Utilizador fez LogIn.
                 saudacoes = line;
                 JOptionPane.showMessageDialog(null, saudacoes);
@@ -104,61 +154,45 @@ public class Interface {
                 JOptionPane.showMessageDialog(null, saudacoes);
                 pw.println((mensagem("Pretende entrar no chat(1), procurar um cliente(2) ou sair(3)?", saudacoes)));
             } 
+            /**********************************/
             
-            else if (line.startsWith("Pretende inscrever-se como cliente(1) ou taxista(2)?")){
-                pw.println((mensagem(line, "SignIn")));
+         
+            /***********PEDIDO_CLIENTE*********/
+            else if ("PEDIDO_C".equals(line)){
+                pw.println((mensagem("Indique a coordenada X do local\nonde se encontra:", "Procurar taxista")));
+                pw.println((mensagem("Indique a coordenada Y do local\nonde se encontra:", "Procurar taxista")));
+
+                pw.println((mensagem("Indique a coordenada X do local\npara onde se pretende deslocar:", "Procurar taxista")));
+                pw.println((mensagem("Indique a coordenada Y do local\npara onde se pretende deslocar:", "Procurar taxista")));
+                
+                JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um taxista\npara realizar o seu pedido.");
+            }           
+            else if (line.startsWith("DADOS_C")) {
+                JOptionPane.showMessageDialog(null, line.substring(7));
             }
-            
-            else if (line.startsWith("TAXISTA")){
-                pw.println((mensagem("Foi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?", "SignIn")));
+            else if (line.startsWith("CHEGADA_C")) {
+                JOptionPane.showMessageDialog(null, "Alcançou o seu detino.\nObrigado por usar este serviço de taxis.\nSer-lhe-ão cobrados: " + line.substring(9) + " euros.\nVolte sempre.");
             }
+            /**********************************/
+
             
-           
+            /***********PEDIDO_TAXISTA*********/
+            else if ("PEDIDO_T".equals(line)){
+                pw.println((mensagem("Indique a coordenada X do local\nonde se encontra:", "Procurar cliente")));
+                pw.println((mensagem("Indique a coordenada Y do local\nonde se encontra:", "Procurar cliente")));
+
+                JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um cliente\npara realizar o seu pedido.");
+            }
+            else if (line.startsWith("DADOS_T")) {
+                JOptionPane.showMessageDialog(null, line.substring(7));
+            }
+            else if (line.startsWith("CHEGADA_T")) {
+                JOptionPane.showMessageDialog(null, "Levou o cliente até ao seu destino.\nIrá ter que cobrar : " + line.substring(9) + " euros.\nObrigado.");
+            }
+            /**********************************/
+ 
+            
             else if (line.startsWith("Opção inválida.")){
-                JOptionPane.showMessageDialog(null, line);
-            }
-            
-            else if (line.startsWith("Insira o nome de utilizador a usar:")){
-                pw.println((mensagem(line, "SignIn")));
-            }
-            
-            else if (line.startsWith("Insira a password a usar:")){
-                pw.println((mensagem(line, "SignIn")));
-            }
-            
-            else if (line.startsWith("Insira o seu contacto:")){
-                pw.println((mensagem(line, "SignIn")));
-            }
-            
-            else if (line.startsWith("Já existe um cliente com este nome, por favor tente novamente.")){
-                JOptionPane.showMessageDialog(null, line);
-            }
-            
-            else if (line.startsWith("Insira o seu contacto:")){
-                pw.println((mensagem(line, "SignIn")));
-            }
-            
-            else if (line.startsWith("Insira o modelo do seu carro:")){
-                pw.println((mensagem(line, "SignIn")));
-            }
-            
-            else if (line.startsWith("Insira a matricula do seu carro:")){
-                pw.println((mensagem(line, "SignIn")));
-            }
-            
-            else if (line.startsWith("Registado com sucesso!")){
-                JOptionPane.showMessageDialog(null, line);
-            }
-            
-            else if (line.startsWith("Insira a matricula do seu carro:")){
-                pw.println((mensagem(line, "SignIn")));
-            }
-            
-            else if (line.startsWith("Foi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?")){
-                pw.println((mensagem(line, "LognIn")));
-            }
-            
-            else if (line.startsWith("LogIn inválido, por favor tente novamente.")){
                 JOptionPane.showMessageDialog(null, line);
             }
         }

@@ -128,7 +128,7 @@ public class DataBase {
             
             if (inscritos.containsKey(s1)) {
                 
-                pw.println("Já existe um cliente com este nome, por favor tente novamente.");
+                pw.println("SignInKO");
                 return;
             }
             

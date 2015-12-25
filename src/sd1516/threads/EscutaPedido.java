@@ -37,6 +37,7 @@ public class EscutaPedido extends Thread {
    */
   @Override
   public void run() {
+      int xp, yp, xc, yc;
        boolean chat = false;
        try {
 
@@ -91,6 +92,15 @@ public class EscutaPedido extends Thread {
                                                                         
                                     if (opcao == 2) {
                                         
+                                        pw.println("PEDIDO_C");
+                                        
+                                        xp = Integer.parseInt(br.readLine());
+                                        yp = Integer.parseInt(br.readLine());
+                                        
+                                        xc = Integer.parseInt(br.readLine());
+                                        yc = Integer.parseInt(br.readLine());
+                                        
+                                        
                                      
                                     }
                                     
@@ -121,7 +131,10 @@ public class EscutaPedido extends Thread {
                                     }
                                     
                                     if (opcao == 2) {
-                                        //pedido
+                                        pw.println("PEDIDO_T");
+                                        
+                                        xp = Integer.parseInt(br.readLine());
+                                        yp = Integer.parseInt(br.readLine());
                                     }
                                     
                                     if (opcao == 3) {return;}
@@ -129,7 +142,7 @@ public class EscutaPedido extends Thread {
                             }    
                             
                             if (opcao == -1) { // Log in inválido
-                                pw.println("LogIn inválido, por favor tente novamente.");
+                                pw.println("LogInKO");
                                 break;
                             }
                         }
@@ -141,7 +154,9 @@ public class EscutaPedido extends Thread {
             }
         } catch (IOException e) {
             System.out.println(e);
-        } finally {
+        } catch (NumberFormatException nfe) {
+            pw.println("Opção inválida.");
+        }finally {
             if (pw != null && chat) db.removeEscritor(pw); //Tira do chat para o caso de ter lá entrado
             try {
                 socket.shutdownOutput();
