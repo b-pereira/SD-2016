@@ -28,9 +28,9 @@ public class EscutaPedido extends Thread {
     this.socket     = socket;
   }
 
-  public void enviaMensagem() throws IOException{
+  public void enviaMensagem(String tipo) throws IOException{
        String mensagem = br.readLine();
-       db.enviaMensagem(mensagem, nome);
+       db.enviaMensagem(mensagem, nome, tipo);
   }
   /**
    * Interpreta o pedido do cliente desta thread.
@@ -49,7 +49,7 @@ public class EscutaPedido extends Thread {
             String linha;
             
             while (true) {
-                    pw.println("Pretende fazer LogIn(1) ou SignIn(2)?");
+                    pw.println("INICIO");
                     
                     linha = br.readLine();
                     if (linha == null) continue;
@@ -58,21 +58,22 @@ public class EscutaPedido extends Thread {
 
                     if (opcao == 1) { //login
                         while (true) {
-        		    pw.println("Insira o seu nome de utilizador:");
-			    nome = br.readLine();
                             
-			    pw.println("Insira a sua password:");	
+        		    pw.println("LOGIN");
+                            
+			    nome     = br.readLine();	
 			    password = br.readLine();
-                            
+
                             opcao = db.logIn(nome, password, pw, br);
                             
                             if (opcao == 0) { //É um cliente
-                                pw.println ("Bem vindo cliente "+nome);
-                                          
-                                pw.println ("Pretende entrar no chat(1), procurar um taxista(2) ou sair(3)?");
-                                opcao = Integer.parseInt(br.readLine());
+                                
+                                while (true) {
+                                    pw.println ("Bem vindo cliente "+nome);
+                                    opcao = Integer.parseInt(br.readLine());
                                     
                                     if (opcao == 1) { //chat
+                                        pw.println("CHAT");
                                         /**
                                          * Adicionar o print writer do scoket deste cliente ao set 
                                          * com todos os print writers para assim ele receber mensagens do chat.
@@ -83,27 +84,28 @@ public class EscutaPedido extends Thread {
                                          * Aceitar mensagens deste cliente e enviá-las para o chat.
                                          */
                                         while (true) {
-                                            enviaMensagem();
+                                            enviaMensagem("Cliente");
                                         }
                                     }
                                     
                                                                         
                                     if (opcao == 2) {
-                                        //pedido
+                                        
+                                     
                                     }
                                     
                                     if (opcao == 3) {return;}
+                                }
                             }
                         
                             if (opcao == 1) { //É um taxista
-                                pw.println ("Bem vindo taxista "+nome);
                                           
                                 while (true) {
-                                    pw.println ("Pretende entrar no chat(1), procurar um cliente(2) ou sair(3)?");
+                                    pw.println ("Bem vindo taxista "+nome);
                                     opcao = Integer.parseInt(br.readLine());
                                     
                                     if (opcao == 1) { //chat
-                                    pw.println("chat");
+                                        pw.println("CHAT");
                                         /**
                                          * Adicionar o print writer do scoket deste cliente ao set 
                                          * com todos os print writers para assim ele receber mensagens.
@@ -114,7 +116,7 @@ public class EscutaPedido extends Thread {
                                          * Aceitar mensagens deste cliente e enviá-las.
                                          */
                                         while (true) {
-                                            enviaMensagem();
+                                            enviaMensagem("Taxista");
                                         }
                                     }
                                     
@@ -128,6 +130,7 @@ public class EscutaPedido extends Thread {
                             
                             if (opcao == -1) { // Log in inválido
                                 pw.println("LogIn inválido, por favor tente novamente.");
+                                break;
                             }
                         }
                     }

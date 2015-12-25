@@ -54,9 +54,9 @@ public class DataBase {
         pws.add(pw);
     }
     
-    public void enviaMensagem(String mensagem, String nome) {
+    public void enviaMensagem(String mensagem, String nome, String tipo) {
         for (PrintWriter escritor : pws) {
-            escritor.println( "-> Cliente " + nome + " diz: " + mensagem);
+            escritor.println( "-> " + tipo + " " + nome + " diz: " + mensagem);
         }
     }
     
@@ -91,11 +91,11 @@ public class DataBase {
             
         if (!(z.getPassword().equals(s2))) return -1; // password errada
             
-        if (z.getClass().getName().equals("sd1516.Cliente")) return 0; // existe e é cliente
+        if (z.getClass().getName().equals("sd1516.business.Cliente")) return 0; // existe e é cliente
         
         while (true){
            
-            pw.println("Foi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?");
+            pw.println("TAXISTA");
             i = Integer.parseInt(br.readLine());
             if (i == 1) return 0;
             if (i == 2) break;

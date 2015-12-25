@@ -29,7 +29,7 @@ public class Servidor {
     
     public Servidor (String ficheiro) {
         //preenche db com os dados no ficheiro.
-        db = null;
+        db = new DataBase();
     }
 
     public DataBase getDataBase (){
