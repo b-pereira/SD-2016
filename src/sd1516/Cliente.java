@@ -19,7 +19,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
-public class Interface {
+public class Cliente {
 
     
     /***************Variáveis de Classe*************/
@@ -40,7 +40,7 @@ public class Interface {
     
     /**********************************************/
     
-     public Interface() {
+     public Cliente() {
 
         // Definir GUI
         textField.setEditable(false);
@@ -100,7 +100,7 @@ public class Interface {
                 pw.println((mensagem("Insira a sua password:", "LogIn")));
             } 
             else if (line.startsWith("TAXISTA")){
-                pw.println((mensagem("Foi detetado que esta conta possui tanto um cliente associado como um taxista.\nPretende aceder ao sistema como cliente(1) ou como taxista(2)?", "SignIn")));
+                pw.println((mensagem("Foi detetado que esta conta possui tanto um passageiro associado como um taxista.\nPretende aceder ao sistema como passageiro(1) ou como taxista(2)?", "SignIn")));
             }
             else if (line.startsWith("LogInKO")){
                 JOptionPane.showMessageDialog(null, "LogIn inválido, por favor tente novamente.");
@@ -109,7 +109,7 @@ public class Interface {
             
             
             /****************SIGNIN*************/
-            else if (line.startsWith("Pretende inscrever-se como cliente(1) ou taxista(2)?")){
+            else if (line.startsWith("Pretende inscrever-se como passageiro(1) ou taxista(2)?")){
                 pw.println((mensagem(line, "SignIn")));
             }
             else if (line.startsWith("Insira o nome de utilizador a usar:")){
@@ -122,7 +122,7 @@ public class Interface {
                 pw.println((mensagem(line, "SignIn")));
             }
             else if (line.startsWith("SignInKO")){
-                JOptionPane.showMessageDialog(null, "Já existe um cliente com este nome, por favor tente novamente.");
+                JOptionPane.showMessageDialog(null, "Já existe um passageiro com este nome, por favor tente novamente.");
             }
             else if (line.startsWith("Insira o seu contacto:")){
                 pw.println((mensagem(line, "SignIn")));
@@ -143,7 +143,7 @@ public class Interface {
             
             
             /***********SAUDACOES**************/
-            else if (line.startsWith("Bem vindo cliente")){ //Utilizador fez LogIn.
+            else if (line.startsWith("Bem vindo passageiro")){ //Utilizador fez LogIn.
                 saudacoes = line;
                 JOptionPane.showMessageDialog(null, saudacoes);
                 pw.println((mensagem("Pretende entrar no chat(1), procurar um taxista(2) ou sair(3)?", saudacoes)));
@@ -152,13 +152,13 @@ public class Interface {
             else if (line.startsWith("Bem vindo taxista")){ //Utilizador fez LogIn.
                 saudacoes = line;
                 JOptionPane.showMessageDialog(null, saudacoes);
-                pw.println((mensagem("Pretende entrar no chat(1), procurar um cliente(2) ou sair(3)?", saudacoes)));
+                pw.println((mensagem("Pretende entrar no chat(1), procurar um passageiro(2) ou sair(3)?", saudacoes)));
             } 
             /**********************************/
             
          
-            /***********PEDIDO_CLIENTE*********/
-            else if ("PEDIDO_C".equals(line)){
+            /***********PEDIDO_PASSAGEIRO*********/
+            else if ("PEDIDO_P".equals(line)){
                 pw.println((mensagem("Indique a coordenada X do local\nonde se encontra:", "Procurar taxista")));
                 pw.println((mensagem("Indique a coordenada Y do local\nonde se encontra:", "Procurar taxista")));
 
@@ -178,16 +178,16 @@ public class Interface {
             
             /***********PEDIDO_TAXISTA*********/
             else if ("PEDIDO_T".equals(line)){
-                pw.println((mensagem("Indique a coordenada X do local\nonde se encontra:", "Procurar cliente")));
-                pw.println((mensagem("Indique a coordenada Y do local\nonde se encontra:", "Procurar cliente")));
+                pw.println((mensagem("Indique a coordenada X do local\nonde se encontra:", "Procurar passageiro")));
+                pw.println((mensagem("Indique a coordenada Y do local\nonde se encontra:", "Procurar passageiro")));
 
-                JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um cliente\npara realizar o seu pedido.");
+                JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um passageiro\npara realizar o seu pedido.");
             }
             else if (line.startsWith("DADOS_T")) {
                 JOptionPane.showMessageDialog(null, line.substring(7));
             }
             else if (line.startsWith("CHEGADA_T")) {
-                JOptionPane.showMessageDialog(null, "Levou o cliente até ao seu destino.\nIrá ter que cobrar : " + line.substring(9) + " euros.\nObrigado.");
+                JOptionPane.showMessageDialog(null, "Levou o passageiro até ao seu destino.\nIrá ter que cobrar : " + line.substring(9) + " euros.\nObrigado.");
             }
             /**********************************/
  
@@ -200,7 +200,7 @@ public class Interface {
 
 
     public static void main(String[] args) throws Exception {
-        Interface i = new Interface();
+        Cliente i = new Cliente();
         i.iniciar();
     }
      

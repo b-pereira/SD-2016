@@ -10,7 +10,7 @@ import sd1516.utils.Posicao;
  *
  * @author ASUS
  */
-public class Taxista extends Cliente {
+public class Taxista extends Passageiro {
 
       /** Variáveis de Classe ******************************/
      /**/private String modelo; /* Modelo do veículo*** */

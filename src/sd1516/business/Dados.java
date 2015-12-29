@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package sd1516;
+package sd1516.business;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,23 +11,21 @@ import java.io.PrintWriter;
 import static java.lang.Thread.sleep;
 import java.util.*;
 import java.util.Map.Entry;
-import sd1516.business.Cliente;
-import sd1516.business.Taxista;
 import sd1516.utils.Posicao;
 /**
  *
  * @author Grupo 
  */
-public class DataBase {
+public class Dados {
     
     /**
-     * <nome do inscrito, objeto cliente> Este HashMap inclui todos os inscritos no sistema, clientes ou taxistas.
+     * <nome do inscrito, objeto passageiro> Este HashMap inclui todos os inscritos no sistema, passageiros ou taxistas.
      * Serve para fazer LogIn e SignIn.
      */
-    private HashMap<String, Cliente> inscritos;
+    private HashMap<String, Passageiro> inscritos;
     
-    private HashMap<Posicao, String> taxistas;  // <posicao do taxista, nome do taxista> Este HashMap inclui apenas os taxistas que pretendem encontrar cliente.
-    private Queue<Cliente> clientes; // Esta queue inclui apenas os clientes que pretendem encontrar taxista.
+    private HashMap<Posicao, String> taxistas;  // <posicao do taxista, nome do taxista> Este HashMap inclui apenas os taxistas livres que pretendem encontrar passageiro.
+    private Queue<Passageiro> passageiros; // Esta queue inclui apenas os passageiros que pretendem encontrar taxista.
     
      /**
      * Set com os printwiters de todos os inscritos activos.
@@ -35,7 +33,7 @@ public class DataBase {
      */
     private static HashSet<PrintWriter> pws = new HashSet<PrintWriter>();
     
-    public DataBase () {
+    public Dados () {
          //Implementar busca a um ficheiro para encher o HashMap
          inscritos = new HashMap<>();
          
@@ -66,7 +64,7 @@ public class DataBase {
          tax.setPos(pos);
     }
      
-    public Cliente getCliente (String nome) {
+    public Passageiro getPassageiro (String nome) {
          return inscritos.get(nome);
     }
      
@@ -87,11 +85,11 @@ public class DataBase {
         
         if (!(inscritos.containsKey(s1))) return -1; // não existe
             
-        Cliente z = inscritos.get(s1);
+        Passageiro z = inscritos.get(s1);
             
         if (!(z.getPassword().equals(s2))) return -1; // password errada
             
-        if (z.getClass().getName().equals("sd1516.business.Cliente")) return 0; // existe e é cliente
+        if (z.getClass().getName().equals("sd1516.business.Passageiro")) return 0; // existe e é passageiro
         
         while (true){
            
@@ -112,7 +110,7 @@ public class DataBase {
             int i;
 
             while (true) {
-                pw.println("Pretende inscrever-se como cliente(1) ou taxista(2)?");
+                pw.println("Pretende inscrever-se como passageiro(1) ou taxista(2)?");
                 i = Integer.parseInt(br.readLine());
                 
                 if (i == 1 || i == 2) break;
@@ -146,7 +144,7 @@ public class DataBase {
             }
             
             pw.println("A registar..");
-            inscritos.put(s1, new Cliente(s1,s3,s2, new Posicao(0,0)));
+            inscritos.put(s1, new Passageiro(s1,s3,s2, new Posicao(0,0)));
             pw.println("Registado com sucesso!");
     }
         
@@ -184,7 +182,7 @@ public class DataBase {
         
         inscritos.get(nome).setPos(new Posicao (xc,yc));
         
-        clientes.remove();
+        passageiros.remove();
         
         
     }
@@ -193,8 +191,8 @@ public class DataBase {
         taxistas.put(new Posicao(x,y), nome);
     }
     
-    public void clienteEspera (String nome) {
-        clientes.add(inscritos.get(nome));
+    public void PassageiroEspera (String nome) {
+        passageiros.add(inscritos.get(nome));
     }
      
      

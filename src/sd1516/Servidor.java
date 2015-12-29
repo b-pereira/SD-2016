@@ -6,7 +6,7 @@ package sd1516;
 
 import java.io.IOException;
 import java.net.ServerSocket;
-
+import sd1516.business.Dados;
 import sd1516.threads.EscutaPedido;
 
 /**
@@ -21,18 +21,18 @@ public class Servidor {
     private static final int PORT = 7229;
 
     /**
-     * O conjunto de todos os inscritos (clientes e taxistas)
-     * e dos clientes/taxistas em espera.  
+     * O conjunto de todos os inscritos (passageiros e taxistas)
+     * e dos passageiros/taxistas em espera.  
      */
-    private DataBase db;
+    private Dados db;
      
     
     public Servidor (String ficheiro) {
         //preenche db com os dados no ficheiro.
-        db = new DataBase();
+        db = new Dados();
     }
 
-    public DataBase getDataBase (){
+    public Dados getDados (){
         return db;
     }
     
@@ -49,7 +49,7 @@ public class Servidor {
         
         try {
             while (true) {
-                new EscutaPedido(listener.accept(), servidor.getDataBase()).start();
+                new EscutaPedido(listener.accept(), servidor.getDados()).start();
             }
         } catch (IOException e) {
             System.out.println(e);

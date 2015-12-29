@@ -8,7 +8,7 @@ package sd1516.threads;
 import java.io.*;
 import java.net.Socket;
 
-import sd1516.DataBase;
+import sd1516.business.Dados;
 
 /**
  *
@@ -21,9 +21,9 @@ public class EscutaPedido extends Thread {
   
   private BufferedReader br;
   private PrintWriter pw;
-  private final DataBase db;
+  private final Dados db;
 
-  public EscutaPedido(Socket socket, DataBase db) {
+  public EscutaPedido(Socket socket, Dados db) {
     this.db         = db;
     this.socket     = socket;
   }
@@ -67,10 +67,10 @@ public class EscutaPedido extends Thread {
 
                             opcao = db.logIn(nome, password, pw, br);
                             
-                            if (opcao == 0) { //É um cliente
+                            if (opcao == 0) { //É um passageiro
                                 
                                 while (true) {
-                                    pw.println ("Bem vindo cliente "+nome);
+                                    pw.println ("Bem vindo passageiro "+nome);
                                     opcao = Integer.parseInt(br.readLine());
                                     
                                     if (opcao == 1) { //chat
@@ -85,14 +85,14 @@ public class EscutaPedido extends Thread {
                                          * Aceitar mensagens deste cliente e enviá-las para o chat.
                                          */
                                         while (true) {
-                                            enviaMensagem("Cliente");
+                                            enviaMensagem("Passageiro");
                                         }
                                     }
                                     
                                                                         
                                     if (opcao == 2) {
                                         
-                                        pw.println("PEDIDO_C");
+                                        pw.println("PEDIDO_P");
                                         
                                         xp = Integer.parseInt(br.readLine());
                                         yp = Integer.parseInt(br.readLine());
