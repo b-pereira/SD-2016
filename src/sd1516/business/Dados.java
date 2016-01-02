@@ -16,6 +16,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import sd1516.utils.Posicao;
+import sd1516.utils.DadosTransito;
 
 
 /**
@@ -33,7 +34,7 @@ public class Dados {
     private final HashMap<Posicao, String> taxistas;  // <posicao do taxista, nome do taxista> Este HashMap inclui apenas os taxistas livres que pretendem encontrar passageiro.
     private final HashSet<String> passageiros; // Esta queue inclui os nomes dos passageiros em espera por um taxista.
     
-    private final HashMap<String, Posicao> emTransito;
+    private final HashMap<String, DadosTransito> emTransito;
     
      /**
      * Set com os printwiters de todos os inscritos activos.
@@ -226,7 +227,7 @@ public class Dados {
         }
     }
      
-    public String getTaxista (int x, int y) {
+    public String getTaxista (int x, int y, int x2, int y2, PrintWriter pwp) {
         Posicao pos;
         String nome = null;
         int i, j=0;
@@ -251,7 +252,7 @@ public class Dados {
             }
             
             synchronized (emTransito) {
-                emTransito.put(nome, new Posicao(x,y));
+                emTransito.put(nome, new DadosTransito (new Posicao(x,y), new Posicao(x2,y2), pwp));
                 emTransito.notifyAll(); // Avisar todos os taxistas
             }
 
@@ -262,7 +263,7 @@ public class Dados {
         }
     }    
      
-    public Posicao getDestino(String nome){
+    public DadosTransito getDadosTransito(String nome){
        synchronized (emTransito) { 
            while (emTransito.get(nome) == null) {
                try {

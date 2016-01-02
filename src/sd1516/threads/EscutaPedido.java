@@ -10,6 +10,7 @@ import java.net.Socket;
 
 import sd1516.business.Dados;
 import sd1516.business.Taxista;
+import sd1516.utils.DadosTransito;
 import sd1516.utils.Posicao;
 
 /**
@@ -103,16 +104,9 @@ public class EscutaPedido extends Thread {
                                         yc = Integer.parseInt(br.readLine());
                                         
                                         db.putPassageiro(nome);
-                                        Taxista tax = db.getObjetoTaxista(db.getTaxista(xp, yp));
+                                        Taxista tax = db.getObjetoTaxista(db.getTaxista(xp, yp, xc, yc, pw));
                                         pw.println("DADOS_P Taxista encontrado!\nNome: "+tax.getNome()+"\nModelo: "+tax.getModelo()+"\nMatricula: "+tax.getMatricula());
-                                        int tempo = (db.calcularTemp(xp, yp, xc, yc));
-                                        try {
-                                            sleep(tempo*6000); // Esperar o tempo suficiente para fazer a viagem.
-                                        } catch (InterruptedException ie) {
-                                            ie.printStackTrace();
-                                        } 
-                                        
-                                        pw.println("CHEGADA_P "+(tempo*0.5)); //0.5 euros por minuto.
+                                       
                                     }
                                     
                                     if (opcao == 3) {return;}
@@ -146,12 +140,24 @@ public class EscutaPedido extends Thread {
                                         
                                         xp = Integer.parseInt(br.readLine());
                                         yp = Integer.parseInt(br.readLine());
+                                        db.putTaxista(nome,xp,yp);
                                         
-                                        Posicao destino = db.getDestino(nome);
-                                        xc = destino.getX();
-                                        yc = destino.getY();
+                                        DadosTransito transito = db.getDadosTransito(nome);
+                                        xp = transito.getPartida().getX();
+                                        yp = transito.getPartida().getY();
+                                        pw.println("DADOS_T Um passageiro necessita do seu servico na posicao: ("+xp+","+yp+")");
                                         
-                                        pw.println("DADOS_T Um passageiro necessita do seu servico na posicao: ("+xc+","+yc+")");
+                                        xc = transito.getChegada().getX();
+                                        yc = transito.getChegada().getY();
+                                        int tempo = (db.calcularTemp(xp, yp, xc, yc));
+                                        try {
+                                            sleep(tempo*6000); // Esperar o tempo suficiente para fazer a viagem.
+                                        } catch (InterruptedException ie) {
+                                            ie.printStackTrace();
+                                        } 
+                                        
+                                        transito.getPassageiroPW().println("CHEGADA_P "+(tempo*0.5)); //Avisar o passageiro que chegou ao destino. 0,5 euros por minuto.
+                                        pw.println("CHEGADA_T "+(tempo*0.5)); //Avisar o taxista que chegou ao destino. 0,5 euros por minuto.
                                         
                                     }
                                     
