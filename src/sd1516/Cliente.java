@@ -36,7 +36,7 @@ public class Cliente {
     JTextField textField  = new JTextField(40);
     JTextArea messageArea = new JTextArea(8, 40);     
     /********************/
-    
+
     
     /**********************************************/
     
@@ -167,11 +167,11 @@ public class Cliente {
                 
                 JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um taxista\npara realizar o seu pedido.");
             }           
-            else if (line.startsWith("DADOS_C")) {
+            else if (line.startsWith("DADOS_P")) {
                 JOptionPane.showMessageDialog(null, line.substring(7));
             }
-            else if (line.startsWith("CHEGADA_C")) {
-                JOptionPane.showMessageDialog(null, "Alcançou o seu detino.\nObrigado por usar este serviço de taxis.\nSer-lhe-ão cobrados: " + line.substring(9) + " euros.\nVolte sempre.");
+            else if (line.startsWith("CHEGADA_P")) {
+                JOptionPane.showMessageDialog(null, "Alcançou o seu destino.\nObrigado por usar este serviço de taxis.\nSer-lhe-ão cobrados: " + line.substring(9) + " euros.\nVolte sempre.");
             }
             /**********************************/
 
