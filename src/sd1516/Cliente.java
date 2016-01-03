@@ -66,7 +66,7 @@ public class Cliente {
         JOptionPane.showMessageDialog(null, "Bem vindo ao serviço de Taxis!");
         // Conectar ao servidor e definir o escritor e o leitor.
         String serverIP = mensagem("Indique o endereço IP do servidor.(exemplo: localHost)","Taxis");
-        Socket socket = new Socket(serverIP, 7229);
+        Socket socket = new Socket(serverIP, 65000);
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pw = new PrintWriter(socket.getOutputStream(), true); // true serve para fazer auto flush
         String saudacoes;

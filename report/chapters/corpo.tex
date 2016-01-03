@@ -2,6 +2,15 @@
 
 \section{Análise do Problema}
 
+Este projeto deverá ser capaz de emular um serviço de táxis de acordo com as seguintes funcionalidades:
+
+registar utilizadores (fazer log in/sign in) que poderão ser passageiros ou taxistas. Um taxista será capaz de escolher usar o serviço como passageiro ou taxista enquanto que um passageiro somente terá direito a usufruir das funcionalidades permitidas a um passageiro. Para além disso os passageiros deverão ser capazes de solicitar um taxista ficando em espera até que haja pelo menos um taxista livre para realizar o seu pedido. No caso de existirem vários taxistas livres aquele que se encontrar mais perto será o taxi indicado para realizar o pedido em questão.
+
+Para além destas funcionalidades obrigatórias implementamos também uma funcionalidade extra que consiste num chat indiscriminado entre utilizadores. Dizemos indiscriminado pois é permitido tanto aos passageiros como aos taxistas a sua utilização. A única restrição que se impõe é que enquanto um utilizador está a usar o chat não pode usar nenhuma das outras funcionalidades do sistema: pedir por um taxista/esperar por um passageiro.
+
+Todas estas funcionalidades deverão ser capazes de funcionar concorrentemente, várias threads serão lançadas, uma por cada utilizador ativo e em situação alguma deverão ocorrer deadlocks, starvation, ou corrupção dos dados por acesso indevido a uma zona crítica.
+
+
 %1. Hipótese / Objetivo. Em primeiro lugar, referir o que se está a tentar descobrir, ou tentar fazer, da
 %froma mais clara possível
 
@@ -9,7 +18,20 @@
 
 \section{Implementação}
 
+Para se implementar este serviço de acordo com a análise do problema mencionada anteriormente, decidimos criar um classe Client que iria comunicar diretamente com o utilizador. Com recurso a janelas "PopUp" o utilizador é informado do que está a acontecer e da mesma forma são-lhe pedidas informações pertinentes.
 
+Aquando do início da aplicação o utilizador tem duas opções: Log in e Sign in.
+
+Estas opções baseiam-se em trabalhar com uma classe de nome Dados onde são guardados todos os dados relevantes: utilizadores inscritos, taxistas livres, escritores de utilizadores no chat, etc... Para gerir as threads concorrentes nos métodos relativos a Sign in e a Log in, usa-se um simples bloco de synchronized onde se bloqueia o objecto que contém todos os utilizadores inscritos no sistema.
+
+Depois de ter feito Log in com sucesso depara-se com mais três opções: entrar no chat, solicitar um taxista/solicitar um passageiro ou sair. 
+
+Qualquer utilizador poderá entrar no chat. este chat baseia-se numa janela com uma área para escrever mensagens (enviadas com o premir do botão Enter) e de uma área de apresentação das mensagens. Todos os utilizadores no chat serão capazes de ler todas as mensagens enviadas por qualquer utilizador, mas apenas desde o momento em que entraram no chat. As mensagens são apresentadas de acordo com a seguinte terminologia: "-> Taxista Anand diz:" se for um taxista de nome Anand ou "-> Passageiro Karpov diz:" se for um passageiro de nome Karpov.
+
+Para a opção de solicitar taxista/passageiro recorremos à seguinte estratégia. Um taxista ao solicitar um passageiro anuncia que está livre (faz um "put") e assinala essa mesma informação a um só passageiro que estava à espera que isso acontecesse. Quando existem táxis livres um passageiro pode então solicitar um taxi (faz um "get") e é-lhe atribuído um taxista. Quando isto acontece todos os taxistas livres em espera de passageiro são assinalados para irem verificar se são eles o táxi atribuído, se não forem voltam a estar em estado de espera até um novo cliente os assinalar de novo. Podemos então perceber que para gerir a concorrência se uma um ReentrantLock e duas variáveis de condição. Umas das variáveis irá servir para fazer esperar ou notificar os passageiros e a outra para fazer esperar ou notificar os taxistas. Desta maneira podemos assinalar um só passageiro para deixar de esperar quando temos taxistas livres pois sabemos de certeza que estamos a assinalar um passageiro e nunca um taxista e que os passageiros serão assinalados de uma maneira minimamente ordenada de modo a evitar starvation dos mesmos (a natureza do ReentrantLock garante-nos isto). Com os taxistas não podemos assinalar apenas um pois não temos como saber que é o taxista certo, por isso assinalamos todos e os errados irão voltar a esperar. Isto é mau apenas em termos de eficiência, pois não tem mal haver starvation dos taxistas visto que o objetivo é servir o passageiro e não o taxista. A posição dos taxistas será sempre guardada no seu próprio objeto (começando em (0,0) quando este se inscreve no sistema, assumiremos que esta posição é relativa à central de táxis) e é atualizada aquando de cada viagem, este conhecimento pelo sistema da posição simula a existência de um gps que indica a posição dos táxis. O passageiro não terá uma posição guardada no sistema, pois por razões óbvios nenhum passageiro ia querer que o sistema de táxis soubesse a sua posição a todos os momentos.
+Notas: Estipulamos que demora um segundo a passar de uma posição consecutiva para outra e que esse segundo de viagem custa 0.1 euros. Apenas se começa a cobrar a partir do momento que o taxista e o passageiro se encontram. 
+
+Caso o utilizador opte por sair o seu escritor, o seu leitor e a sua ligação ao servidor são fechados e a aplicação termina.
 
 
 \section{Testes}
