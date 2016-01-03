@@ -24,9 +24,7 @@ public class Cliente {
     
     /***************Variáveis de Classe*************/
     
-         /***********************************************************************************/
-        /**/ private int port;          /**port*********************************************/
-       /**/ private String host;       /**IP do host***************************************/
+       /***********************************************************************************/
       /**/ private BufferedReader br; /**variável para leitura****************************/
      /**/ private PrintWriter pw;    /**variável para escrita****************************/ 
     /***********************************************************************************/    
@@ -167,12 +165,19 @@ public class Cliente {
                 pw.println((mensagem("Indique a coordenada Y do local\npara onde se pretende deslocar:", "Procurar taxista")));
                 
                 JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um taxista\npara realizar o seu pedido.");
-            }           
+            }      
             else if (line.startsWith("DADOS_P")) {
-                JOptionPane.showMessageDialog(null, line.substring(7));
+                JOptionPane.showMessageDialog(null, "Taxista encontrado.\n"+line.substring(7));
             }
-            else if (line.startsWith("CHEGADA_P")) {
-                JOptionPane.showMessageDialog(null, "Alcançou o seu destino.\nObrigado por usar este serviço de taxis.\nSer-lhe-ão cobrados: " + line.substring(9) + " euros.\nVolte sempre.");
+            else if (line.startsWith("TEMPO")) {
+                JOptionPane.showMessageDialog(null, "O táxista irá demorar "+line.substring(6)+" segundos\na chegar até si.");
+            }
+            else if (line.startsWith("CHEGADA_Pi")) {
+                JOptionPane.showMessageDialog(null, "O taxista chegou até si.");
+            }
+            else if (line.startsWith("CHEGADA_Pf")) {
+                JOptionPane.showMessageDialog(null, "Alcançou o seu destino.\nObrigado por usar este serviço de taxis.\nSer-lhe-ão cobrados: " + line.substring(10) + " euros.\nVolte sempre.");
+                pw.println("fim");
             }
             /**********************************/
 
@@ -184,11 +189,14 @@ public class Cliente {
 
                 JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um passageiro\npara realizar o seu pedido.");
             }
+            else if (line.startsWith("CHEGADA_Ti")) {
+                JOptionPane.showMessageDialog(null, "Chegou até ao cliente.");
+            }
             else if (line.startsWith("DADOS_T")) {
                 JOptionPane.showMessageDialog(null, line.substring(7));
             }
-            else if (line.startsWith("CHEGADA_T")) {
-                JOptionPane.showMessageDialog(null, "Levou o passageiro até ao seu destino.\nIrá ter que cobrar : " + line.substring(9) + " euros.\nObrigado.");
+            else if (line.startsWith("CHEGADA_Tf")) {
+                JOptionPane.showMessageDialog(null, "Levou o passageiro até ao seu destino.\nIrá ter que cobrar : " + line.substring(10) + " euros.\nObrigado.");
             }
             /**********************************/
  

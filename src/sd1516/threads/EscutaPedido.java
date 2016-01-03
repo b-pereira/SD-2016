@@ -39,9 +39,10 @@ public class EscutaPedido extends Thread {
    */
   @Override
   public void run() {
-      int xp, yp, xc, yc;
-       boolean chat = false;
-       try {
+    int xp, yp, xc, yc, xt, yt, tempo;
+    Taxista tax = null;
+    boolean chat = false;
+        try {
 
             InputStream       is = socket.getInputStream();  
             OutputStream      os = socket.getOutputStream();  
@@ -102,11 +103,9 @@ public class EscutaPedido extends Thread {
                                         xc = Integer.parseInt(br.readLine());
                                         yc = Integer.parseInt(br.readLine());
                                         
-                                        System.out.println("caralho!!!!!!");
-                                        Taxista tax = db.getObjetoTaxista(db.getTaxista(xp, yp, xc, yc, pw));
-                                        System.out.println("caralho2!!!!!!");
-                                        pw.println("DADOS_P Taxista encontrado!\nNome: "+tax.getNome()+"\nModelo: "+tax.getModelo()+"\nMatricula: "+tax.getMatricula());
-                                       
+                                        db.getTaxista(xp, yp, xc, yc, pw);
+
+                                        while (!(br.readLine().equals("fim"))); //espera que chegue ao destino para continuar
                                     }
                                     
                                     if (opcao == 3) {return;}
@@ -138,27 +137,41 @@ public class EscutaPedido extends Thread {
                                     if (opcao == 2) {
                                         pw.println("PEDIDO_T");
                                         
-                                        xp = Integer.parseInt(br.readLine());
-                                        yp = Integer.parseInt(br.readLine());
-                                        db.putTaxista(nome,xp,yp);
+                                        xt = Integer.parseInt(br.readLine());
+                                        yt = Integer.parseInt(br.readLine());
+                                        db.putTaxista(nome,xt,yt);
                                         
                                         DadosTransito transito = db.getDadosTransito(nome);
                                         xp = transito.getPartida().getX();
                                         yp = transito.getPartida().getY();
                                         pw.println("DADOS_T Um passageiro necessita do seu servico na posicao: ("+xp+","+yp+")");
                                         
+                                        tax = db.getObjetoTaxista(nome);
+                                        transito.getPassageiroPW().println("DADOS_PNome: "+tax.getNome()+" || Modelo: "+tax.getModelo()+" || Matricula: "+tax.getMatricula());
+                                        
                                         xc = transito.getChegada().getX();
                                         yc = transito.getChegada().getY();
-                                        int tempo = (db.calcularTemp(xp, yp, xc, yc));
+                                        
+                                        tempo = db.calcularTemp(xt, yt, xp, yp);
+                                        transito.getPassageiroPW().println("TEMPO "+tempo);
+                                        try {
+                                            Thread.sleep(tempo*1000); // Esperar o tempo suficiente para chegar ao cliente.
+                                        } catch (InterruptedException ie) {
+                                            ie.printStackTrace();
+                                        }
+                                        transito.getPassageiroPW().println("CHEGADA_Pi");
+                                        pw.println("CHEGADA_Ti");
+                                        
+                                        tempo = (db.calcularTemp(xp, yp, xc, yc));
                                         try {
                                             Thread.sleep(tempo*1000); // Esperar o tempo suficiente para fazer a viagem.
                                         } catch (InterruptedException ie) {
                                             ie.printStackTrace();
                                         } 
                                         
-                                        transito.getPassageiroPW().println("CHEGADA_P "+(tempo*0.05)); //Avisar o passageiro que chegou ao destino. 0,05 euros por segundo.
-                                        pw.println("CHEGADA_T "+(tempo*0.05)); //Avisar o taxista que chegou ao destino. 0,05 euros por segundo.
-                                        
+                                        transito.getPassageiroPW().println("CHEGADA_Pf"+(tempo*0.1)); //Avisar o passageiro que chegou ao destino. 0,05 euros por segundo.
+                                        pw.println("CHEGADA_Tf"+(tempo*0.1)); //Avisar o taxista que chegou ao destino. 0,05 euros por segundo.
+
                                     }
                                     
                                     if (opcao == 3) {return;}

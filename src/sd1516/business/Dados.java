@@ -184,7 +184,7 @@ public class Dados {
         }
     }
      
-    public String getTaxista (int x, int y, int x2, int y2, PrintWriter pwp) {
+    public void getTaxista (int x, int y, int x2, int y2, PrintWriter pwp) {
         Posicao pos;
         String nome = null;
         int i, j=0;
@@ -205,7 +205,8 @@ public class Dados {
                 i = calcularTemp (pos.getX(), pos.getY(), x,y);
             
                 if (primeiro){
-                    j = i; 
+                    j = i;
+                    nome = e.getKey();
                     primeiro = false; 
                 }
             
@@ -218,9 +219,6 @@ public class Dados {
             taxistas.remove(nome);
             emTransito.put(nome, new DadosTransito (new Posicao(x,y), new Posicao(x2,y2), pwp));
             transito.signalAll();
-
-            return nome;
-            
         } finally {
             lock.unlock();
         }
@@ -236,8 +234,10 @@ public class Dados {
                    ie.printStackTrace();
                }
            }
-           return emTransito.get(nome);
-       } finally {
+           DadosTransito dt = emTransito.get(nome);
+           emTransito.remove(nome);
+           return dt;
+        } finally {
             lock.unlock();
         }
     }
