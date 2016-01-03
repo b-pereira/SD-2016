@@ -1,0 +1,24 @@
+\begin{figure}[H]
+\centering
+\resizebox{0.7\textwidth}{!}{%
+\begin{tikzpicture}
+	\begin{semilogyaxis}
+		    [
+					x tick label style={/pgf/number format/1000 sep=}, 
+	grid=major,
+	log ticks with fixed point,
+	xlabel={Redução temporal [U.T.]},
+	ylabel={Custo Total [U.M.]},
+					enlargelimits=0.15, 
+			ybar, bar width=7pt, 
+				]
+
+\addplot table [x=red,y=custo, color=red,] {data/res.txt};
+		\end{semilogyaxis}
+\end{tikzpicture}
+}%
+\caption{Gráfico do custo total do projeto em função das reduções de tempo}
+\label{p4:fig:grafico1}
+\end{figure}
+
+

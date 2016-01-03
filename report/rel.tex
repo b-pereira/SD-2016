@@ -1,0 +1,68 @@
+\documentclass[pdftex,12pt,a4paper]{report}
+
+\usepackage[pdftex]{graphicx}
+\usepackage{float}
+\usepackage{fancyvrb}
+\fvset{xleftmargin=2em}
+
+\usepackage{pgfplots}
+\pgfplotsset{width=10cm,compat=1.9}
+\usepackage{tikzscale}
+\usepackage{pgfplotstable}
+\usepackage{booktabs}
+\usepackage[font=small,labelfont=bf,tableposition=top]{caption}
+
+\usepackage[utf8]{inputenc} % isto é um comentário
+\usepackage[portuges]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{times}
+%\usepackage{lmodern}
+\usepackage[obeyspaces,spaces]{url}
+\usepackage[left=25mm,right=25mm,top=25mm,bottom=25mm]{geometry}
+\usepackage{titlesec}
+\usepackage{mathtools}
+\usepackage{amsfonts}
+
+%identa 1º paragrafo de capitulos e secções
+\usepackage{indentfirst}
+
+
+
+\usepackage[]{hyperref}
+\hypersetup{
+%pdftitle={Trabalho 1 - Gestão de Projeto},
+%pdfauthor={Bruno Pereira},
+%pdfsubject={Investigação Operacional},
+%pdfkeywords={keyword1, keyword2}},
+bookmarksnumbered=true,     
+bookmarksopen=true,         
+bookmarksopenlevel=1,       
+colorlinks=true,            
+pdfstartview=Fit,           
+pdfpagemode=UseOutlines, % this is the option you were lookin for
+pdfpagelayout=TwoPageRight
+		}
+%\hypersetup{pdftex,colorlinks=true,allcolors=blue}
+%\usepackage{hypcap}
+
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\titleformat{\chapter}{\normalfont\huge}{\thechapter.}{20pt}{\huge}
+
+
+\begin{document}
+
+\input{./report/title.tex}
+\begin{abstract}
+Fazer Abstract
+\end{abstract}
+
+\tableofcontents
+
+\input{./report/chapters/introducao}
+\input{./report/chapters/corpo}
+\input{./report/chapters/conclusao}
+
+
+\end {document}
+
+
