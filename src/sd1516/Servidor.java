@@ -18,7 +18,7 @@ public class Servidor {
     /**
      * O port onde o servidar irá escutar.
      */
-    private static final int PORT = 7229;
+    private static final int PORT = 65000;
 
     /**
      * O conjunto de todos os inscritos (passageiros e taxistas)
