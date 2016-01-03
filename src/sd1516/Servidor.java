@@ -52,7 +52,7 @@ public class Servidor {
                 new EscutaPedido(listener.accept(), servidor.getDados()).start();
             }
         } catch (IOException e) {
-            System.out.println(e);
+            e.printStackTrace();
         } finally {
             listener.close();
         }

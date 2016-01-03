@@ -74,10 +74,11 @@ public class Cliente {
         String saudacoes;
         
         while (true) {
-            String line = br.readLine();
+            String line;
+            if ((line=br.readLine())==null) continue;
             
             /*************INICIO***************/
-            if ("INICIO".equals(line)) { 
+            else if ("INICIO".equals(line)) { 
                 pw.println((mensagem("Pretende fazer LogIn(1) ou SignIn(2)?", "Taxis")));
             } 
             /**********************************/

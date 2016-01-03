@@ -11,7 +11,6 @@ import java.net.Socket;
 import sd1516.business.Dados;
 import sd1516.business.Taxista;
 import sd1516.utils.DadosTransito;
-import sd1516.utils.Posicao;
 
 /**
  *
@@ -103,8 +102,9 @@ public class EscutaPedido extends Thread {
                                         xc = Integer.parseInt(br.readLine());
                                         yc = Integer.parseInt(br.readLine());
                                         
-                                        db.putPassageiro(nome);
+                                        System.out.println("caralho!!!!!!");
                                         Taxista tax = db.getObjetoTaxista(db.getTaxista(xp, yp, xc, yc, pw));
+                                        System.out.println("caralho2!!!!!!");
                                         pw.println("DADOS_P Taxista encontrado!\nNome: "+tax.getNome()+"\nModelo: "+tax.getModelo()+"\nMatricula: "+tax.getMatricula());
                                        
                                     }
@@ -151,13 +151,13 @@ public class EscutaPedido extends Thread {
                                         yc = transito.getChegada().getY();
                                         int tempo = (db.calcularTemp(xp, yp, xc, yc));
                                         try {
-                                            sleep(tempo*6000); // Esperar o tempo suficiente para fazer a viagem.
+                                            Thread.sleep(tempo*1000); // Esperar o tempo suficiente para fazer a viagem.
                                         } catch (InterruptedException ie) {
                                             ie.printStackTrace();
                                         } 
                                         
-                                        transito.getPassageiroPW().println("CHEGADA_P "+(tempo*0.5)); //Avisar o passageiro que chegou ao destino. 0,5 euros por minuto.
-                                        pw.println("CHEGADA_T "+(tempo*0.5)); //Avisar o taxista que chegou ao destino. 0,5 euros por minuto.
+                                        transito.getPassageiroPW().println("CHEGADA_P "+(tempo*0.05)); //Avisar o passageiro que chegou ao destino. 0,05 euros por segundo.
+                                        pw.println("CHEGADA_T "+(tempo*0.05)); //Avisar o taxista que chegou ao destino. 0,05 euros por segundo.
                                         
                                     }
                                     
@@ -180,6 +180,7 @@ public class EscutaPedido extends Thread {
             System.out.println(e);
         } catch (NumberFormatException nfe) {
             pw.println("Opção inválida.");
+            nfe.printStackTrace();
         }finally {
             if (pw != null && chat) db.removeEscritor(pw); //Tira do chat para o caso de ter lá entrado
             try {
@@ -187,7 +188,7 @@ public class EscutaPedido extends Thread {
                 socket.close();
          
             } catch (IOException e) {
-                System.out.println(e);
+                e.printStackTrace();
             }
         }
     }

@@ -12,6 +12,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -31,8 +32,7 @@ public class Dados {
      */
     private final HashMap<String, Passageiro> inscritos;
     
-    private final HashMap<Posicao, String> taxistas;  // <posicao do taxista, nome do taxista> Este HashMap inclui apenas os taxistas livres que pretendem encontrar passageiro.
-    private final HashSet<String> passageiros; // Esta queue inclui os nomes dos passageiros em espera por um taxista.
+    private final HashMap<String, Posicao> taxistas;  // <posicao do taxista, nome do taxista> Este HashMap inclui apenas os taxistas livres que pretendem encontrar passageiro.
     
     private final HashMap<String, DadosTransito> emTransito;
     
@@ -42,15 +42,13 @@ public class Dados {
      */
     private static final HashSet<PrintWriter> pws = new HashSet<PrintWriter>();
     
-    private final Lock lockPassageiros = new ReentrantLock();
-    private final Lock lockTaxistas    = new ReentrantLock();
-    private final Lock lockChat        = new ReentrantLock();
-    private final Lock lockInscritos   = new ReentrantLock();
+    private final Lock lock                 = new ReentrantLock();
+    private final Condition taxiLivre       = lock.newCondition();
+    private final Condition transito        = lock.newCondition();
     
     public Dados () {
          //Implementar busca a um ficheiro para encher o HashMap
          inscritos   = new HashMap<>();
-         passageiros = new HashSet<>();
          taxistas    = new HashMap<>();
          emTransito  = new HashMap<>();
          
@@ -60,34 +58,22 @@ public class Dados {
     /***Operacoes do chat***/
     
     public void removeEscritor(PrintWriter pw) {
-        lockChat.lock();
-        try {
+        synchronized(pws) {
             pws.remove(pw);
-        }
-        finally {
-            lockChat.unlock();
         }
     } 
     
     public void adicionaEscritor(PrintWriter pw) {
-        lockChat.lock();
-        try {
+        synchronized(pws) {
             pws.add(pw);
-        }
-        finally {
-            lockChat.unlock();
         }
     }
     
     public void enviaMensagem(String mensagem, String nome, String tipo) {
-        lockChat.lock();
-        try {
+        synchronized(pws) {
             for (PrintWriter escritor : pws) {
                 escritor.println( "-> " + tipo + " " + nome + " diz: " + mensagem);
             }
-        }
-        finally {
-            lockChat.unlock();
         }
     }
     
@@ -96,41 +82,28 @@ public class Dados {
 
      
     public Passageiro getPassageiro (String nome) {
-        lockPassageiros.lock();
-        try {
+        synchronized(inscritos) {
             return inscritos.get(nome);
-        }
-        finally {
-            lockPassageiros.unlock();
         }
     }
      
     public String getMatricula(String s1){
-        lockTaxistas.lock();
-        try {
+        synchronized(inscritos){
             Taxista tax = (Taxista) inscritos.get(s1);
             return tax.getMatricula();
-        }
-        finally {
-            lockTaxistas.unlock();
         }
     }
     
     public String getModelo(String s1){
-        lockTaxistas.lock();
-        try {
+        synchronized(inscritos) {
             Taxista tax = (Taxista) inscritos.get(s1);
             return tax.getModelo();
-        }
-        finally {
-            lockTaxistas.unlock();
         }
     }
     
     public int logIn (String s1, String s2, PrintWriter pw, BufferedReader br) throws IOException{
         int i;
-        lockInscritos.lock();
-        try {
+        synchronized(inscritos) {
             if (!(inscritos.containsKey(s1))) return -1; // não existe
             
             Passageiro z = inscritos.get(s1);
@@ -150,10 +123,6 @@ public class Dados {
             
             return 1; // existe e é taxista
         }
-        finally {
-            lockInscritos.unlock();
-        }
-    
     }
 
     /**********************sign in***********************/
@@ -161,8 +130,7 @@ public class Dados {
     public void signIn (PrintWriter pw, BufferedReader br) throws IOException{
         String s1,s2,s3,s4,s5;
         int i;
-        lockInscritos.lock();
-        try {
+        synchronized(inscritos) {
             while (true) {
                 pw.println("Pretende inscrever-se como passageiro(1) ou taxista(2)?");
                 i = Integer.parseInt(br.readLine());
@@ -201,29 +169,18 @@ public class Dados {
             inscritos.put(s1, new Passageiro(s1,s3,s2, new Posicao(0,0)));
             pw.println("Registado com sucesso!");
         }
-        finally {
-            lockInscritos.unlock();
-        }
     }
         
     /****************************************************/
     
     
     public void putTaxista (String nome, int x, int y) {
-        lockTaxistas.lock();
+        lock.lock();
         try {
-            taxistas.put(new Posicao(x,y), nome); // coloca taxista
+            taxistas.put(nome, new Posicao(x,y)); // coloca taxista
+            taxiLivre.signal();
         } finally {
-            lockTaxistas.unlock();
-        }
-    }
-    
-    public void putPassageiro (String nome) {
-        lockPassageiros.lock();
-        try {
-            passageiros.add(nome); // coloca passageiro
-        } finally {
-            lockPassageiros.lock();
+            lock.unlock();
         }
     }
      
@@ -233,10 +190,17 @@ public class Dados {
         int i, j=0;
         boolean primeiro = true;
       
-        lockTaxistas.lock();
+        lock.lock();
         try {
-            for(Entry<Posicao, String> e : taxistas.entrySet()) {
-                pos = e.getKey();
+            while (taxistas.isEmpty()) {
+                try {
+                    taxiLivre.await();
+                } catch (InterruptedException ie) {
+                    ie.printStackTrace();
+                }
+            }
+            for(Entry<String, Posicao> e : taxistas.entrySet()) {
+                pos = e.getValue();
             
                 i = calcularTemp (pos.getX(), pos.getY(), x,y);
             
@@ -245,58 +209,54 @@ public class Dados {
                     primeiro = false; 
                 }
             
-                if (i<j){
+                if (i<j){ //este taxista encontra-se mais próximo.
                     j=i;
-                    nome = e.getValue();
+                    nome = e.getKey();
                 }
             }
             
-            synchronized (emTransito) {
-                emTransito.put(nome, new DadosTransito (new Posicao(x,y), new Posicao(x2,y2), pwp));
-                emTransito.notifyAll(); // Avisar todos os taxistas
-            }
+            taxistas.remove(nome);
+            emTransito.put(nome, new DadosTransito (new Posicao(x,y), new Posicao(x2,y2), pwp));
+            transito.signalAll();
 
             return nome;
             
         } finally {
-            lockTaxistas.unlock();
+            lock.unlock();
         }
     }    
      
     public DadosTransito getDadosTransito(String nome){
-       synchronized (emTransito) { 
+        lock.lock();
+        try {
            while (emTransito.get(nome) == null) {
                try {
-                   emTransito.wait();
+                   transito.await();
                } catch (InterruptedException ie) {
                    ie.printStackTrace();
                }
            }
            return emTransito.get(nome);
-       }
+       } finally {
+            lock.unlock();
+        }
     }
     
     public Taxista getObjetoTaxista (String nome) {
-        lockInscritos.lock();
-        try {
+        synchronized(inscritos) {
             return (Taxista) inscritos.get(nome);
-        } finally {
-            lockInscritos.unlock();
         }
     }
     
     public Passageiro getObjetoPassageiro (String nome) {
-        lockInscritos.lock();
-        try {
+        synchronized(inscritos) {
             return inscritos.get(nome);
-        } finally {
-            lockInscritos.unlock();
         }
     }
     
     public int calcularTemp (int x, int y, int x1, int y1) {
             
-         //Assumiremos que demora um minuto a passar de uma posição para outra consecutiva.
+         //Assumiremos que demora um segundo a passar de uma posição para outra consecutiva.
         //Calcula o tempo usando a distancia Manhattam
         return Math.abs(x-x1) + Math.abs(y-y1);
     }
