@@ -61,11 +61,11 @@ public class Teste {
      
     private void iniciar() throws IOException {
         
-        JOptionPane.showMessageDialog(null, "Bem vindo ao serviço de Taxis!");
+        System.out.println("Bem vindo ao serviço de Taxis!");
         // Conectar ao servidor e definir o escritor e o leitor.
         System.out.println("Indique o endereço IP do servidor.(exemplo: localHost)");
         String serverIP = in.nextLine();
-        Socket socket = new Socket(serverIP, 7229);
+        Socket socket = new Socket(serverIP, 65000);
         br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         pw = new PrintWriter(socket.getOutputStream(), true); // true serve para fazer auto flush
         String saudacoes;
