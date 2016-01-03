@@ -200,7 +200,13 @@ public class Cliente {
             
             else if (line.startsWith("Opção inválida.")){
                 JOptionPane.showMessageDialog(null, line);
+                break;
             }
+            
+            else if ("TERMINAR".equals(line)) { 
+                JOptionPane.showMessageDialog(null, "Obrigado por usar o nosso serviço.");
+                break;
+            } 
         }
     }
 

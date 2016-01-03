@@ -219,7 +219,13 @@ public class Teste {
             
             else if (line.startsWith("Opção inválida.")){
                 System.out.println(line);
+                break;
             }
+            
+            else if ("TERMINAR".equals(line)) { 
+                System.out.println("Obrigado por usar o nosso serviço.");
+                break;
+            } 
         }
     }
 

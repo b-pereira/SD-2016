@@ -181,7 +181,10 @@ public class EscutaPedido extends Thread {
 
                                     }
                                     
-                                    if (opcao == 3) {return;}
+                                    if (opcao == 3) {
+                                        pw.println("TERMINAR");
+                                        return;
+                                    }
                                 }
                             }    
                             
