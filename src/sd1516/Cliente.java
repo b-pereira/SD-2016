@@ -203,7 +203,7 @@ public class Cliente {
                 break;
             }
             
-            else if ("TERMINAR".equals(line)) { 
+            else if (line.startsWith("TERMINAR")) { 
                 JOptionPane.showMessageDialog(null, "Obrigado por usar o nosso serviço.");
                 break;
             } 
