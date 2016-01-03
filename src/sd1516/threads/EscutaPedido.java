@@ -208,10 +208,11 @@ public class EscutaPedido extends Thread {
             try {
                 socket.shutdownOutput();
                 socket.close();
-            pw.println("TERMINAR");
             } catch (IOException e) {
                 e.printStackTrace();
             }
+            
+            pw.println("TERMINAR");
         }
     }
 }
