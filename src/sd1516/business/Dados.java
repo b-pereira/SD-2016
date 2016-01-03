@@ -47,7 +47,6 @@ public class Dados {
     private final Condition transito        = lock.newCondition();
     
     public Dados () {
-         //Implementar busca a um ficheiro para encher o HashMap
          inscritos   = new HashMap<>();
          taxistas    = new HashMap<>();
          emTransito  = new HashMap<>();
@@ -166,7 +165,7 @@ public class Dados {
             }
             
             pw.println("A registar..");
-            inscritos.put(s1, new Passageiro(s1,s3,s2, new Posicao(0,0)));
+            inscritos.put(s1, new Passageiro(s1,s3,s2));
             pw.println("Registado com sucesso!");
         }
     }

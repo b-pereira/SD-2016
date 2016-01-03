@@ -15,18 +15,16 @@ public class Passageiro {
       /**/private String nome; /* Nome do cliente**********/
      /**/private String contacto; /* Contacto do cliente */
     /**/private String password; /* Password do cliente */
-   /**/private Posicao pos; /* Posição do cliente ******/
-  /****************************************************/
+   /****************************************************/
 
 
 
   /************* Construtor *********/
 
-  public Passageiro(String nome, String contacto, String password, Posicao pos) {
+  public Passageiro(String nome, String contacto, String password) {
     this.nome = nome;
     this.contacto = contacto;
     this.password = password;
-    this.pos = pos;
   }
  
   /********************************/
@@ -43,14 +41,6 @@ public class Passageiro {
 
   /*****************************/
 
-  
-  public Posicao getPos () {
-      return pos;
-  } 
-  
-  public void setPos(Posicao pos) {
-      this.pos = pos;
-  }
   
   
   /************ Password ***********/

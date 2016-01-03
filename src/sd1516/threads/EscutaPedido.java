@@ -7,10 +7,12 @@ package sd1516.threads;
 
 import java.io.*;
 import java.net.Socket;
+import java.text.DecimalFormat;
 
 import sd1516.business.Dados;
 import sd1516.business.Taxista;
 import sd1516.utils.DadosTransito;
+import sd1516.utils.Posicao;
 
 /**
  *
@@ -30,6 +32,7 @@ public class EscutaPedido extends Thread {
     this.socket     = socket;
   }
 
+  
   public void enviaMensagem(String tipo) throws IOException{
        String mensagem = br.readLine();
        db.enviaMensagem(mensagem, nome, tipo);
@@ -40,7 +43,8 @@ public class EscutaPedido extends Thread {
   @Override
   public void run() {
     int xp, yp, xc, yc, xt, yt, tempo;
-    Taxista tax = null;
+    Taxista tax;
+    DecimalFormat f = new DecimalFormat("##.00");
     boolean chat = false;
         try {
 
@@ -135,10 +139,12 @@ public class EscutaPedido extends Thread {
                                     }
                                     
                                     if (opcao == 2) {
-                                        pw.println("PEDIDO_T");
+
+                                        tax = db.getObjetoTaxista(nome);
                                         
-                                        xt = Integer.parseInt(br.readLine());
-                                        yt = Integer.parseInt(br.readLine());
+                                        xt = tax.getPos().getX();
+                                        yt = tax.getPos().getY();
+                                        pw.println("PEDIDO_T Taxista "+nome+" está na posicao ("+xt+","+yt+") vamos agora procurar um passageiro para si.");
                                         db.putTaxista(nome,xt,yt);
                                         
                                         DadosTransito transito = db.getDadosTransito(nome);
@@ -146,7 +152,7 @@ public class EscutaPedido extends Thread {
                                         yp = transito.getPartida().getY();
                                         pw.println("DADOS_T Um passageiro necessita do seu servico na posicao: ("+xp+","+yp+")");
                                         
-                                        tax = db.getObjetoTaxista(nome);
+                   
                                         transito.getPassageiroPW().println("DADOS_PNome: "+tax.getNome()+" || Modelo: "+tax.getModelo()+" || Matricula: "+tax.getMatricula());
                                         
                                         xc = transito.getChegada().getX();
@@ -159,6 +165,8 @@ public class EscutaPedido extends Thread {
                                         } catch (InterruptedException ie) {
                                             ie.printStackTrace();
                                         }
+                                        
+                                        tax.setPos(new Posicao(xp,yp));
                                         transito.getPassageiroPW().println("CHEGADA_Pi");
                                         pw.println("CHEGADA_Ti");
                                         
@@ -168,9 +176,10 @@ public class EscutaPedido extends Thread {
                                         } catch (InterruptedException ie) {
                                             ie.printStackTrace();
                                         } 
+                                        tax.setPos(new Posicao(xc,yc));
                                         
-                                        transito.getPassageiroPW().println("CHEGADA_Pf"+(tempo*0.1)); //Avisar o passageiro que chegou ao destino. 0,05 euros por segundo.
-                                        pw.println("CHEGADA_Tf"+(tempo*0.1)); //Avisar o taxista que chegou ao destino. 0,05 euros por segundo.
+                                        transito.getPassageiroPW().println("CHEGADA_Pf"+String.format("%.2f", tempo*0.1)); //Avisar o passageiro que chegou ao destino. 0,05 euros por segundo.
+                                        pw.println("CHEGADA_Tf"+String.format("%.2f", tempo*0.1)); //Avisar o taxista que chegou ao destino. 0,05 euros por segundo.
 
                                     }
                                     

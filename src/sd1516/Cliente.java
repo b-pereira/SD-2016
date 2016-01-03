@@ -183,11 +183,8 @@ public class Cliente {
 
             
             /***********PEDIDO_TAXISTA*********/
-            else if ("PEDIDO_T".equals(line)){
-                pw.println((mensagem("Indique a coordenada X do local\nonde se encontra:", "Procurar passageiro")));
-                pw.println((mensagem("Indique a coordenada Y do local\nonde se encontra:", "Procurar passageiro")));
-
-                JOptionPane.showMessageDialog(null, "Por favor espere enquanto procuramos um passageiro\npara realizar o seu pedido.");
+            else if (line.startsWith("PEDIDO_T")){
+                JOptionPane.showMessageDialog(null, line.substring(8));
             }
             else if (line.startsWith("CHEGADA_Ti")) {
                 JOptionPane.showMessageDialog(null, "Chegou até ao cliente.");

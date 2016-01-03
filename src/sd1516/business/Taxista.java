@@ -12,10 +12,11 @@ import sd1516.utils.Posicao;
  */
 public class Taxista extends Passageiro {
 
-      /** Variáveis de Classe ******************************/
-     /**/private String modelo; /* Modelo do veículo*** */
+      /** Variáveis de Classe *******************************/
+     /**/private String modelo;    /* Modelo do veículo ****/
     /**/private String matricula; /* Matrícula do veículo */
-  /*****************************************************/
+   /**/private Posicao pos;      /* Posicao do veículo ***/
+  /******************************************************/
 
 
 
@@ -24,22 +25,22 @@ public class Taxista extends Passageiro {
   public Taxista(Posicao pos, String modelo, String matricula, String nome, String contacto,
       String password) {
 
-    super(nome, contacto, password, pos);
-
+    super(nome, contacto, password);
+    
     this.modelo = modelo;
     this.matricula = matricula;
-
+    this.pos = pos;
   }
 
   /***********************************/
 
 
   public void setPos(Posicao pos) {
-    super.setPos(pos);
+    this.pos = pos;
   }
 
   public Posicao getPos() {
-    return super.getPos();
+    return pos;
   }
 
 
