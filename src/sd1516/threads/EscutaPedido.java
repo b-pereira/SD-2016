@@ -7,7 +7,6 @@ package sd1516.threads;
 
 import java.io.*;
 import java.net.Socket;
-import java.text.DecimalFormat;
 
 import sd1516.business.Dados;
 import sd1516.business.Taxista;
@@ -44,7 +43,6 @@ public class EscutaPedido extends Thread {
   public void run() {
     int xp, yp, xc, yc, xt, yt, tempo;
     Taxista tax;
-    DecimalFormat f = new DecimalFormat("##.00");
     boolean chat = false;
         try {
 
